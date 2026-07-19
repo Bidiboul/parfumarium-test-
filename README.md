@@ -30,6 +30,7 @@ npm run preview    # prévisualisation du build
 
 ## Fonctionnalités
 
+- **5 langues** : français (par défaut), anglais, allemand, espagnol, italien. Le sélecteur est sur l'écran d'accueil ; tout le parcours client est traduit (questions, phrases de Thibault, raisons, descriptions des parfums). Les écrans vendeur restent en français. Traductions dans `src/i18n/`.
 - **Diagnostic guidé** : 6 questions (+ 1 sous-question selon l'univers choisi), une question par écran, barre de progression, bouton retour.
 - **Code rapide** : le vendeur entre un code à 5 chiffres (ex. `14134`) pour afficher directement la sélection — cible / famille / occasion / puissance / style.
 - **Recherche par numéro** de parfum, avec filtre femme / homme / unisexe.
@@ -42,7 +43,13 @@ npm run preview    # prévisualisation du build
 src/
 ├── data/
 │   ├── perfumes.ts        # Catalogue des parfums (modifiable facilement)
+│   ├── agent.ts           # Thibault : nom et phrases d'accompagnement
 │   └── questions.ts       # Questions, options et correspondances de tags
+├── i18n/
+│   ├── index.tsx          # Contexte de langue (localStorage + <html lang>)
+│   ├── types.ts           # Interface Translation + liste des langues
+│   ├── fr.ts / en.ts / de.ts / es.ts / it.ts   # Traductions du parcours client
+│   └── descriptions.ts    # Descriptions des parfums traduites
 ├── utils/
 │   ├── recommendation.ts  # Algorithme de scoring et de recommandation
 │   ├── quickCode.ts       # Décodage du code rapide à 5 chiffres

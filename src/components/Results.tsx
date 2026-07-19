@@ -1,14 +1,16 @@
 /*
  * Écran de résultat : sélection principale (top 3), parfums annexes,
- * phrase vendeur, copie de la sélection et nouveau diagnostic.
+ * mot de Thibault, copie de la sélection et nouveau diagnostic.
+ * Tous les textes suivent la langue choisie par le client.
  *
- * L'app est pensée pour le vendeur : les numéros et noms Parfumarium
- * sont mis en avant, la correspondance olfactive reste en petit.
+ * Les numéros et noms Parfumarium sont mis en avant, la
+ * correspondance olfactive reste en petit.
  */
 
 import { useEffect, useMemo, useState } from "react";
 import AgentBubble from "./AgentBubble";
 import { AGENT } from "../data/agent";
+import { useI18n, getDescription } from "../i18n";
 import { perfumes } from "../data/perfumes";
 import { recommendPerfumes, type Answers, type PerfumeWithScore } from "../utils/recommendation";
 import { saveToHistory } from "../utils/history";
@@ -23,12 +25,10 @@ interface ResultsProps {
   onHome: () => void;
 }
 
-const INTENSITY_LABELS = ["Léger", "Moyen", "Fort", "Très puissant"];
-
 /** Pastilles d'intensité (● pleins / ○ vides). */
-function IntensityDots({ level }: { level: number }) {
+function IntensityDots({ level, label }: { level: number; label: string }) {
   return (
-    <span className="tracking-widest text-gold" aria-label={`Intensité ${INTENSITY_LABELS[level - 1]}`}>
+    <span className="tracking-widest text-gold" aria-label={label}>
       {"●".repeat(level)}
       <span className="text-gold-light">{"●".repeat(4 - level)}</span>
     </span>
@@ -37,6 +37,9 @@ function IntensityDots({ level }: { level: number }) {
 
 /** Carte d'un parfum de la sélection principale. */
 function MainCard({ perfume, rank }: { perfume: PerfumeWithScore; rank: number }) {
+  const { lang, t } = useI18n();
+  const intensityLabel = t.ui.intensityLabels[perfume.intensity - 1];
+
   return (
     <article className="animate-fade-up rounded-3xl border border-line bg-paper p-5 shadow-sm">
       <div className="flex items-start gap-4">
@@ -48,7 +51,8 @@ function MainCard({ perfume, rank }: { perfume: PerfumeWithScore; rank: number }
             <span className="text-gold-dark">{perfume.id}</span> — {perfume.name}
           </h3>
           <p className="mt-1 text-sm text-ink-soft">
-            {perfume.family} · {INTENSITY_LABELS[perfume.intensity - 1]} <IntensityDots level={perfume.intensity} />
+            {perfume.family} · {intensityLabel}{" "}
+            <IntensityDots level={perfume.intensity} label={intensityLabel} />
           </p>
         </div>
       </div>
@@ -57,12 +61,12 @@ function MainCard({ perfume, rank }: { perfume: PerfumeWithScore; rank: number }
       <div className="mt-3 flex flex-wrap gap-1.5">
         {perfume.styles.slice(0, 4).map((s) => (
           <span key={s} className="rounded-full border border-gold-light bg-cream px-2.5 py-0.5 text-xs text-gold-dark capitalize">
-            {s}
+            {t.styleChips[s] ?? s}
           </span>
         ))}
       </div>
 
-      <p className="mt-3 text-sm leading-relaxed text-ink">{perfume.description}</p>
+      <p className="mt-3 text-sm leading-relaxed text-ink">{getDescription(perfume, lang)}</p>
 
       {/* Pourquoi il correspond */}
       {perfume.reasons.length > 0 && (
@@ -78,16 +82,17 @@ function MainCard({ perfume, rank }: { perfume: PerfumeWithScore; rank: number }
 
       {/* Correspondance olfactive, volontairement discrète */}
       <p className="mt-3 border-t border-line pt-2 text-[11px] text-ink-soft/70">
-        Correspondance olfactive : {perfume.match}
+        {t.ui.correspondence} {perfume.match}
       </p>
     </article>
   );
 }
 
 export default function Results({ answers, code, fromHistory, onRestart, onHome }: ResultsProps) {
+  const { t } = useI18n();
   const { top3, extras, sellerPhrase } = useMemo(
-    () => recommendPerfumes(answers, perfumes),
-    [answers]
+    () => recommendPerfumes(answers, perfumes, t),
+    [answers, t]
   );
   const [copied, setCopied] = useState(false);
 
@@ -106,10 +111,10 @@ export default function Results({ answers, code, fromHistory, onRestart, onHome 
     const lines = [
       "Diagnostic Olfactif Parfumarium",
       "",
-      "Sélection principale :",
+      t.ui.copyMain,
       ...top3.map((p, i) => `${i + 1}. ${p.id} — ${p.name} (${p.family})`),
       "",
-      "À faire sentir en plus :",
+      t.ui.copyExtras,
       ...extras.map((p) => `- ${p.id} — ${p.name}`),
     ];
     try {
@@ -123,10 +128,10 @@ export default function Results({ answers, code, fromHistory, onRestart, onHome 
 
   return (
     <div className="mx-auto w-full max-w-xl px-5 pb-14 pt-6">
-      <p className="text-[11px] font-semibold tracking-[0.3em] text-gold uppercase">Résultat du diagnostic</p>
-      <h2 className="mt-2 font-serif text-3xl text-ink">Votre sélection signature</h2>
+      <p className="text-[11px] font-semibold tracking-[0.3em] text-gold uppercase">{t.ui.resultKicker}</p>
+      <h2 className="mt-2 font-serif text-3xl text-ink">{t.ui.resultTitle}</h2>
       <div className="mt-4">
-        <AgentBubble message={AGENT.resultIntro} compact />
+        <AgentBubble message={t.agent.resultIntro} compact />
       </div>
 
       {/* Top 3 */}
@@ -139,7 +144,7 @@ export default function Results({ answers, code, fromHistory, onRestart, onHome 
       {/* Le mot de Thibault (phrase vendeur) */}
       <section className="animate-fade-up mt-8 rounded-3xl bg-ink p-5 text-cream">
         <p className="text-[11px] font-semibold tracking-[0.3em] text-gold-light uppercase">
-          Le mot de {AGENT.name}
+          {t.ui.agentWord(AGENT.name)}
         </p>
         <p className="mt-2 font-serif text-lg leading-relaxed italic">« {sellerPhrase} »</p>
       </section>
@@ -147,7 +152,7 @@ export default function Results({ answers, code, fromHistory, onRestart, onHome 
       {/* Parfums annexes */}
       {extras.length > 0 && (
         <section className="mt-8">
-          <h3 className="font-serif text-2xl text-ink">À faire sentir en plus</h3>
+          <h3 className="font-serif text-2xl text-ink">{t.ui.extrasTitle}</h3>
           <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
             {extras.map((p) => (
               <div key={p.id} className="rounded-2xl border border-line bg-paper px-4 py-3">
@@ -155,7 +160,7 @@ export default function Results({ answers, code, fromHistory, onRestart, onHome 
                   <span className="text-gold-dark">{p.id}</span> — {p.name}
                 </p>
                 <p className="mt-0.5 text-xs text-ink-soft">
-                  {p.family} · {INTENSITY_LABELS[p.intensity - 1]}
+                  {p.family} · {t.ui.intensityLabels[p.intensity - 1]}
                 </p>
               </div>
             ))}
@@ -169,17 +174,17 @@ export default function Results({ answers, code, fromHistory, onRestart, onHome 
           onClick={copySelection}
           className="flex-1 rounded-full border border-ink px-6 py-3.5 text-base font-medium text-ink transition hover:border-gold hover:text-gold-dark active:scale-[0.98]"
         >
-          {copied ? "Sélection copiée ✓" : "Copier la sélection"}
+          {copied ? t.ui.copied : t.ui.copy}
         </button>
         <button
           onClick={onRestart}
           className="flex-1 rounded-full bg-ink px-6 py-3.5 text-base font-medium text-cream transition hover:bg-gold-dark active:scale-[0.98]"
         >
-          Nouveau diagnostic
+          {t.ui.newDiagnostic}
         </button>
       </div>
       <button onClick={onHome} className="mt-3 w-full py-2 text-sm text-ink-soft underline-offset-4 hover:underline">
-        Retour à l'accueil
+        {t.ui.backHome}
       </button>
     </div>
   );

@@ -4,6 +4,7 @@
  */
 
 import { useState } from "react";
+import { I18nProvider } from "./i18n";
 import Home from "./components/Home";
 import Questionnaire from "./components/Questionnaire";
 import Results from "./components/Results";
@@ -34,6 +35,7 @@ export default function App() {
     showResults({ answers: entry.answers, code: entry.code, fromHistory: true });
 
   return (
+    <I18nProvider>
     <div className="min-h-dvh bg-cream">
       {/* En-tête discret sur tous les écrans sauf l'accueil */}
       {screen !== "home" && (
@@ -86,5 +88,6 @@ export default function App() {
         <History onOpen={openHistoryEntry} onBack={() => setScreen("home")} />
       )}
     </div>
+    </I18nProvider>
   );
 }

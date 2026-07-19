@@ -23,6 +23,8 @@
  */
 
 import type { Perfume } from "../data/perfumes";
+import type { Translation } from "../i18n/types";
+import { fr } from "../i18n/fr";
 import {
   FAMILY_OPTIONS,
   SUB_QUESTIONS,
@@ -97,7 +99,7 @@ const acceptedGenders = (target: string): string[] => {
 /* Score d'un parfum                                                   */
 /* ------------------------------------------------------------------ */
 
-const scorePerfume = (p: Perfume, answers: Answers): PerfumeWithScore | null => {
+const scorePerfume = (p: Perfume, answers: Answers, t: Translation): PerfumeWithScore | null => {
   // Exclusion dure : ne jamais proposer un parfum du genre opposé.
   if (!acceptedGenders(answers.genderTarget).includes(p.gender)) return null;
 
@@ -123,7 +125,7 @@ const scorePerfume = (p: Perfume, answers: Answers): PerfumeWithScore | null => 
     likedTags.push(...family.matchTags);
     if (listHasAny([...p.tags, p.family], family.matchTags)) {
       score += 35;
-      reasons.push(`Correspond à l'univers ${family.label.toLowerCase()}`);
+      reasons.push(t.reasons.family(t.options[answers.mainFamily] ?? family.label));
     }
   }
 
@@ -134,7 +136,7 @@ const scorePerfume = (p: Perfume, answers: Answers): PerfumeWithScore | null => 
       likedTags.push(...sub.matchTags);
       if (listHasAny([...p.tags, ...p.notes], sub.matchTags)) {
         score += 25;
-        reasons.push(`Profil « ${sub.label.toLowerCase()} » bien marqué`);
+        reasons.push(t.reasons.sub(t.options[answers.subPreference] ?? sub.label));
       }
     }
   }
@@ -143,7 +145,7 @@ const scorePerfume = (p: Perfume, answers: Answers): PerfumeWithScore | null => 
   const usage = USAGE_OPTIONS[answers.usage];
   if (usage && listHasAny(p.occasions, usage.occasions)) {
     score += 20;
-    reasons.push(`Adapté à l'usage « ${usage.label.toLowerCase()} »`);
+    reasons.push(t.reasons.usage(t.options[answers.usage] ?? usage.label));
   }
 
   /* --- Intensité : +20 exacte, +10 proche, -15 trop éloignée --- */
@@ -152,7 +154,7 @@ const scorePerfume = (p: Perfume, answers: Answers): PerfumeWithScore | null => 
     const diff = Math.abs(p.intensity - wanted);
     if (diff === 0) {
       score += 20;
-      reasons.push(`Intensité ${INTENSITY_OPTIONS[answers.intensity].label.toLowerCase()} comme demandé`);
+      reasons.push(t.reasons.intensity(t.options[answers.intensity] ?? INTENSITY_OPTIONS[answers.intensity].label));
     } else if (diff === 1) {
       score += 10;
     } else {
@@ -164,7 +166,7 @@ const scorePerfume = (p: Perfume, answers: Answers): PerfumeWithScore | null => 
   const style = STYLE_OPTIONS[answers.style];
   if (style && listHasAny(p.styles, style.styles)) {
     score += 20;
-    reasons.push(`Style ${style.label.toLowerCase()}`);
+    reasons.push(t.reasons.style(t.options[answers.style] ?? style.label));
   }
 
   /* --- Notes / tags pertinents supplémentaires : +8 chacun (max 5) --- */
@@ -194,11 +196,11 @@ const scorePerfume = (p: Perfume, answers: Answers): PerfumeWithScore | null => 
   /* --- Bonus / malus contextuels --- */
   if (style?.wantsRassurant && listHasAny(p.styles, ["facile", "rassurant"])) {
     score += 20;
-    reasons.push("Très facile à porter au quotidien");
+    reasons.push(t.reasons.rassurant);
   }
   if (style?.wantsOriginal && (listHasAny(p.styles, ["original", "niche"]) || listHas(p.tags, "niche"))) {
     score += 25;
-    reasons.push("Vraie personnalité niche / originale");
+    reasons.push(t.reasons.original);
   }
   if (usage?.discret && p.intensity >= 3) {
     score -= 30; // trop présent pour un usage discret
@@ -226,44 +228,47 @@ const tooSimilar = (a: Perfume, b: Perfume): boolean => {
 /* Phrase vendeur                                                      */
 /* ------------------------------------------------------------------ */
 
-/** Mot de caractérisation d'un parfum pour la phrase vendeur. */
-const styleWord = (p: Perfume, exclude: string[]): string => {
+/**
+ * Mot de caractérisation d'un parfum pour la phrase vendeur.
+ * Retourne une clé traduite ensuite via t.seller.styleWords.
+ */
+const styleWordKey = (p: Perfume, exclude: string[]): string => {
   const candidates: Array<[string, string]> = [
     ["tendance", "tendance"],
     ["sexy", "sensuel"],
     ["original", "original"],
     ["niche", "confidentiel"],
     ["premium", "premium"],
-    ["charismatique", "affirmé"],
-    ["élégant", "élégant"],
+    ["charismatique", "affirme"],
+    ["élégant", "elegant"],
   ];
-  for (const [styleKey, word] of candidates) {
-    if (listHas(p.styles, styleKey) && !exclude.includes(word)) return word;
+  for (const [styleKey, wordKey] of candidates) {
+    if (listHas(p.styles, styleKey) && !exclude.includes(wordKey)) return wordKey;
   }
-  return exclude.includes("signature") ? "affirmé" : "signature";
+  return exclude.includes("signature") ? "affirme" : "signature";
 };
 
-const buildSellerPhrase = (answers: Answers, top3: PerfumeWithScore[]): string => {
-  const familyLabel = FAMILY_OPTIONS[answers.mainFamily]?.label.toLowerCase() ?? "préféré";
-  if (top3.length < 3) {
-    return `Je vous ai sélectionné quelques parfums dans votre univers ${familyLabel}, choisis spécialement selon vos goûts.`;
-  }
-  const word2 = styleWord(top3[1], ["facile"]);
-  const word3 = styleWord(top3[2], ["facile", word2]);
-  return (
-    `Je vous ai sélectionné trois parfums dans votre univers ${familyLabel} : ` +
-    `un premier très facile à aimer, un deuxième plus ${word2}, et un troisième plus ${word3}.`
-  );
+const buildSellerPhrase = (answers: Answers, top3: PerfumeWithScore[], t: Translation): string => {
+  const familyLabel =
+    t.options[answers.mainFamily] ?? FAMILY_OPTIONS[answers.mainFamily]?.label ?? "";
+  if (top3.length < 3) return t.seller.short(familyLabel);
+  const key2 = styleWordKey(top3[1], []);
+  const key3 = styleWordKey(top3[2], [key2]);
+  return t.seller.phrase(familyLabel, t.seller.styleWords[key2], t.seller.styleWords[key3]);
 };
 
 /* ------------------------------------------------------------------ */
 /* Fonction principale                                                 */
 /* ------------------------------------------------------------------ */
 
-export function recommendPerfumes(answers: Answers, catalogue: Perfume[]): Recommendation {
+export function recommendPerfumes(
+  answers: Answers,
+  catalogue: Perfume[],
+  t: Translation = fr
+): Recommendation {
   // 1. Scorer tous les parfums compatibles avec la cible.
   const scored = catalogue
-    .map((p) => scorePerfume(p, answers))
+    .map((p) => scorePerfume(p, answers, t))
     .filter((p): p is PerfumeWithScore => p !== null);
 
   // 2. Écarter les parfums fortement pénalisés par les notes à éviter,
@@ -304,5 +309,5 @@ export function recommendPerfumes(answers: Answers, catalogue: Perfume[]): Recom
   const top3 = pool.slice(0, 3);
   const extras = pool.slice(3, 7);
 
-  return { top3, extras, sellerPhrase: buildSellerPhrase(answers, top3) };
+  return { top3, extras, sellerPhrase: buildSellerPhrase(answers, top3, t) };
 }

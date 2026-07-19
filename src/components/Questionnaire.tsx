@@ -2,11 +2,12 @@
  * Questionnaire : une question par écran, gros boutons, barre de
  * progression et bouton retour. La sous-question (branchement) est
  * insérée dynamiquement après le choix de la famille olfactive.
+ * Tous les textes proviennent de la langue sélectionnée.
  */
 
 import { useMemo, useState } from "react";
 import AgentBubble from "./AgentBubble";
-import { AGENT_TIPS } from "../data/agent";
+import { useI18n, type Translation } from "../i18n";
 import type { Answers } from "../utils/recommendation";
 import {
   GENDER_OPTIONS,
@@ -34,42 +35,50 @@ interface Step {
 /** Réponses en cours de saisie. */
 type Draft = Partial<Omit<Answers, "avoid">> & { avoid: string[] };
 
-const toOptions = (record: Record<string, { label: string }>) =>
-  Object.entries(record).map(([value, { label }]) => ({ value, label }));
+/** Options d'un groupe, avec libellés traduits (repli : libellé français). */
+const toOptions = (record: Record<string, { label: string }>, t: Translation) =>
+  Object.entries(record).map(([value, { label }]) => ({
+    value,
+    label: t.options[value] ?? label,
+  }));
 
 /** Construit la liste des étapes selon la famille choisie (branchement). */
-const buildSteps = (draft: Draft): Step[] => {
+const buildSteps = (draft: Draft, t: Translation): Step[] => {
   const steps: Step[] = [
-    { key: "genderTarget", title: "Pour qui cherchez-vous un parfum ?", options: toOptions(GENDER_OPTIONS) },
+    { key: "genderTarget", title: t.questions.genderTarget, options: toOptions(GENDER_OPTIONS, t) },
     {
       key: "mainFamily",
-      title: "Quel univers vous attire le plus ?",
+      title: t.questions.mainFamily,
       // La famille « musqué / peau propre » est réservée au code rapide.
-      options: toOptions(FAMILY_OPTIONS).filter((o) => o.value !== "musque-peau"),
+      options: toOptions(FAMILY_OPTIONS, t).filter((o) => o.value !== "musque-peau"),
     },
   ];
 
   // Sous-question éventuelle selon la famille choisie.
   const branch = draft.mainFamily ? FAMILY_OPTIONS[draft.mainFamily]?.branch : undefined;
   if (branch) {
-    const sub = SUB_QUESTIONS[branch];
-    steps.push({ key: "subPreference", title: sub.title, options: toOptions(sub.options) });
+    steps.push({
+      key: "subPreference",
+      title: t.questions[`sub-${branch}`],
+      options: toOptions(SUB_QUESTIONS[branch].options, t),
+    });
   }
 
   steps.push(
-    { key: "usage", title: "Pour quelle utilisation ?", options: toOptions(USAGE_OPTIONS) },
-    { key: "intensity", title: "Quelle puissance souhaitez-vous ?", options: toOptions(INTENSITY_OPTIONS) },
-    { key: "style", title: "Quel style vous correspond le mieux ?", options: toOptions(STYLE_OPTIONS) },
-    { key: "avoid", title: "Souhaitez-vous éviter quelque chose ?", options: toOptions(AVOID_OPTIONS), multi: true },
+    { key: "usage", title: t.questions.usage, options: toOptions(USAGE_OPTIONS, t) },
+    { key: "intensity", title: t.questions.intensity, options: toOptions(INTENSITY_OPTIONS, t) },
+    { key: "style", title: t.questions.style, options: toOptions(STYLE_OPTIONS, t) },
+    { key: "avoid", title: t.questions.avoid, options: toOptions(AVOID_OPTIONS, t), multi: true },
   );
   return steps;
 };
 
 export default function Questionnaire({ onFinish, onQuit }: QuestionnaireProps) {
+  const { t } = useI18n();
   const [draft, setDraft] = useState<Draft>({ avoid: [] });
   const [stepIndex, setStepIndex] = useState(0);
 
-  const steps = useMemo(() => buildSteps(draft), [draft]);
+  const steps = useMemo(() => buildSteps(draft, t), [draft, t]);
   const step = steps[stepIndex];
   const progress = ((stepIndex + 1) / steps.length) * 100;
   const isLast = stepIndex === steps.length - 1;
@@ -137,18 +146,16 @@ export default function Questionnaire({ onFinish, onQuit }: QuestionnaireProps) 
       {/* Question */}
       <div key={step.key} className="animate-fade-up mt-8 flex-1">
         <p className="text-[11px] font-semibold tracking-[0.3em] text-gold uppercase">
-          Question {stepIndex + 1}
+          {t.ui.question} {stepIndex + 1}
         </p>
         <h2 className="mt-2 font-serif text-3xl leading-tight text-ink">{step.title}</h2>
         {/* Accompagnement de Thibault */}
-        {AGENT_TIPS[step.key] && (
+        {t.agent.tips[step.key] && (
           <div className="mt-4">
-            <AgentBubble message={AGENT_TIPS[step.key]} compact />
+            <AgentBubble message={t.agent.tips[step.key]} compact />
           </div>
         )}
-        {step.multi && (
-          <p className="mt-2 text-sm text-ink-soft">Plusieurs choix possibles.</p>
-        )}
+        {step.multi && <p className="mt-2 text-sm text-ink-soft">{t.ui.multi}</p>}
 
         <div className="mt-6 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
           {step.options.map(({ value, label }) => {
@@ -175,7 +182,7 @@ export default function Questionnaire({ onFinish, onQuit }: QuestionnaireProps) 
             onClick={finish}
             className="mt-8 w-full rounded-full bg-ink px-8 py-4 text-base font-medium tracking-wide text-cream shadow-lg transition hover:bg-gold-dark active:scale-[0.98]"
           >
-            Voir la sélection
+            {t.ui.seeSelection}
           </button>
         )}
       </div>
