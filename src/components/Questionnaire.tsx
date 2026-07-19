@@ -5,6 +5,8 @@
  */
 
 import { useMemo, useState } from "react";
+import AgentBubble from "./AgentBubble";
+import { AGENT_TIPS } from "../data/agent";
 import type { Answers } from "../utils/recommendation";
 import {
   GENDER_OPTIONS,
@@ -38,10 +40,10 @@ const toOptions = (record: Record<string, { label: string }>) =>
 /** Construit la liste des étapes selon la famille choisie (branchement). */
 const buildSteps = (draft: Draft): Step[] => {
   const steps: Step[] = [
-    { key: "genderTarget", title: "Pour qui est le parfum ?", options: toOptions(GENDER_OPTIONS) },
+    { key: "genderTarget", title: "Pour qui cherchez-vous un parfum ?", options: toOptions(GENDER_OPTIONS) },
     {
       key: "mainFamily",
-      title: "Quel univers attire le plus le client ?",
+      title: "Quel univers vous attire le plus ?",
       // La famille « musqué / peau propre » est réservée au code rapide.
       options: toOptions(FAMILY_OPTIONS).filter((o) => o.value !== "musque-peau"),
     },
@@ -56,9 +58,9 @@ const buildSteps = (draft: Draft): Step[] => {
 
   steps.push(
     { key: "usage", title: "Pour quelle utilisation ?", options: toOptions(USAGE_OPTIONS) },
-    { key: "intensity", title: "Quelle puissance ?", options: toOptions(INTENSITY_OPTIONS) },
-    { key: "style", title: "Quel style correspond le mieux ?", options: toOptions(STYLE_OPTIONS) },
-    { key: "avoid", title: "Le client veut éviter quelque chose ?", options: toOptions(AVOID_OPTIONS), multi: true },
+    { key: "intensity", title: "Quelle puissance souhaitez-vous ?", options: toOptions(INTENSITY_OPTIONS) },
+    { key: "style", title: "Quel style vous correspond le mieux ?", options: toOptions(STYLE_OPTIONS) },
+    { key: "avoid", title: "Souhaitez-vous éviter quelque chose ?", options: toOptions(AVOID_OPTIONS), multi: true },
   );
   return steps;
 };
@@ -138,6 +140,12 @@ export default function Questionnaire({ onFinish, onQuit }: QuestionnaireProps) 
           Question {stepIndex + 1}
         </p>
         <h2 className="mt-2 font-serif text-3xl leading-tight text-ink">{step.title}</h2>
+        {/* Accompagnement de Thibault */}
+        {AGENT_TIPS[step.key] && (
+          <div className="mt-4">
+            <AgentBubble message={AGENT_TIPS[step.key]} compact />
+          </div>
+        )}
         {step.multi && (
           <p className="mt-2 text-sm text-ink-soft">Plusieurs choix possibles.</p>
         )}

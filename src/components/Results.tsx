@@ -7,6 +7,8 @@
  */
 
 import { useEffect, useMemo, useState } from "react";
+import AgentBubble from "./AgentBubble";
+import { AGENT } from "../data/agent";
 import { perfumes } from "../data/perfumes";
 import { recommendPerfumes, type Answers, type PerfumeWithScore } from "../utils/recommendation";
 import { saveToHistory } from "../utils/history";
@@ -122,7 +124,10 @@ export default function Results({ answers, code, fromHistory, onRestart, onHome 
   return (
     <div className="mx-auto w-full max-w-xl px-5 pb-14 pt-6">
       <p className="text-[11px] font-semibold tracking-[0.3em] text-gold uppercase">Résultat du diagnostic</p>
-      <h2 className="mt-2 font-serif text-3xl text-ink">Sélection principale</h2>
+      <h2 className="mt-2 font-serif text-3xl text-ink">Votre sélection signature</h2>
+      <div className="mt-4">
+        <AgentBubble message={AGENT.resultIntro} compact />
+      </div>
 
       {/* Top 3 */}
       <div className="mt-5 space-y-4">
@@ -131,9 +136,11 @@ export default function Results({ answers, code, fromHistory, onRestart, onHome 
         ))}
       </div>
 
-      {/* Phrase vendeur */}
+      {/* Le mot de Thibault (phrase vendeur) */}
       <section className="animate-fade-up mt-8 rounded-3xl bg-ink p-5 text-cream">
-        <p className="text-[11px] font-semibold tracking-[0.3em] text-gold-light uppercase">Phrase vendeur</p>
+        <p className="text-[11px] font-semibold tracking-[0.3em] text-gold-light uppercase">
+          Le mot de {AGENT.name}
+        </p>
         <p className="mt-2 font-serif text-lg leading-relaxed italic">« {sellerPhrase} »</p>
       </section>
 

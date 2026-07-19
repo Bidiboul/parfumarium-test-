@@ -1,7 +1,9 @@
 # Diagnostic Olfactif Parfumarium
 
 Application web pour **Parfumarium** (parfumerie à Vaison-la-Romaine 84110 — [parfumarium.fr](https://parfumarium.fr)) :
-un questionnaire rapide en boutique qui aide le vendeur à trouver les meilleurs parfums à faire sentir à un client.
+une borne tablette en boutique où le client répond lui-même au questionnaire, accompagné par
+**Thibault, l'agent olfactif digital**, pour découvrir les meilleurs parfums à faire sentir.
+Le nom et les phrases de l'agent sont modifiables dans `src/data/agent.ts`.
 
 À la fin du diagnostic, l'application affiche :
 

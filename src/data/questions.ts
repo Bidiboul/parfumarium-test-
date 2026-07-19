@@ -21,12 +21,12 @@ export interface FamilyOption {
 /* Question 1 — Pour qui est le parfum ?                               */
 /* ------------------------------------------------------------------ */
 export const GENDER_OPTIONS: Record<string, { label: string }> = {
-  femme: { label: "Femme" },
-  homme: { label: "Homme" },
+  femme: { label: "Pour moi — femme" },
+  homme: { label: "Pour moi — homme" },
   mixte: { label: "Mixte / unisexe" },
-  "cadeau-femme": { label: "Cadeau femme" },
-  "cadeau-homme": { label: "Cadeau homme" },
-  "cadeau-mixte": { label: "Cadeau mixte" },
+  "cadeau-femme": { label: "Un cadeau pour une femme" },
+  "cadeau-homme": { label: "Un cadeau pour un homme" },
+  "cadeau-mixte": { label: "Un cadeau mixte" },
 };
 
 /* ------------------------------------------------------------------ */
@@ -64,7 +64,7 @@ export interface SubOption {
 
 export const SUB_QUESTIONS: Record<Branch, { title: string; options: Record<string, SubOption> }> = {
   gourmand: {
-    title: "Quel gourmand l’attire le plus ?",
+    title: "Quel gourmand vous attire le plus ?",
     options: {
       "vanille-douce": { label: "Vanille douce", matchTags: ["vanille", "poire", "guimauve"] },
       "vanille-sexy": { label: "Vanille sexy", matchTags: ["sexy", "séduction", "sensuel", "hypnotique", "cassonade"] },
@@ -76,7 +76,7 @@ export const SUB_QUESTIONS: Record<Branch, { title: string; options: Record<stri
     },
   },
   frais: {
-    title: "Quel type de fraîcheur ?",
+    title: "Quel type de fraîcheur préférez-vous ?",
     options: {
       "propre-musque": { label: "Propre et musqué", matchTags: ["propre", "musc"] },
       citronne: { label: "Citronné / agrumes", matchTags: ["agrumes", "citron", "bergamote", "néroli"] },
@@ -86,7 +86,7 @@ export const SUB_QUESTIONS: Record<Branch, { title: string; options: Record<stri
     },
   },
   bois: {
-    title: "Quel type de bois ?",
+    title: "Quel type de bois préférez-vous ?",
     options: {
       "santal-doux": { label: "Santal doux", matchTags: ["santal"] },
       cuir: { label: "Cuir", matchTags: ["cuir"] },
@@ -97,7 +97,7 @@ export const SUB_QUESTIONS: Record<Branch, { title: string; options: Record<stri
     },
   },
   floral: {
-    title: "Quel floral ?",
+    title: "Quel floral vous ressemble ?",
     options: {
       "rose-elegante": { label: "Rose élégante", matchTags: ["rose"] },
       "fleurs-blanches": { label: "Fleurs blanches", matchTags: ["fleurs blanches", "tubéreuse", "jasmin", "fleur d'oranger"] },
