@@ -36,6 +36,11 @@ npm run preview    # prévisualisation du build
 - **Recherche par numéro** de parfum, avec filtre femme / homme / unisexe.
 - **Copier la sélection** dans le presse-papiers.
 - **Historique local** des 10 derniers diagnostics (localStorage) + bouton reset.
+- **Emporter sa sélection (QR code)** : le client scanne un QR code qui rouvre sa sélection exacte sur son téléphone (langue comprise) et peut commander sur parfumarium.fr. Tout est encodé dans le lien, sans serveur (`src/utils/share.ts`, `src/components/ShareModal.tsx`).
+- **Prix et lien boutique** : chaque parfum affiche son prix et un lien vers sa fiche sur parfumarium.fr. Configuration dans `src/data/shop.ts` (URL, devise, prix par défaut, prix par parfum optionnel).
+- **Mode kiosque** : sur une borne en libre-service, retour automatique à l'accueil après inactivité (90 s) avec remise en français par défaut (`src/hooks/useIdleTimer.ts`).
+- **PWA installable & hors-ligne** : l'app s'installe en plein écran sur la tablette et fonctionne sans réseau (via `vite-plugin-pwa`).
+- **Statistiques vendeur** (`src/components/Stats.tsx`) : synthèse locale et anonyme (univers demandés, parfums les plus recommandés, cibles, langues) pour aider au réassort.
 
 ## Architecture
 
@@ -44,6 +49,7 @@ src/
 ├── data/
 │   ├── perfumes.ts        # Catalogue des parfums (modifiable facilement)
 │   ├── agent.ts           # Thibault : nom et phrases d'accompagnement
+│   ├── shop.ts            # Config boutique : URL, devise, prix, liens produits
 │   └── questions.ts       # Questions, options et correspondances de tags
 ├── i18n/
 │   ├── index.tsx          # Contexte de langue (localStorage + <html lang>)
@@ -53,15 +59,21 @@ src/
 ├── utils/
 │   ├── recommendation.ts  # Algorithme de scoring et de recommandation
 │   ├── quickCode.ts       # Décodage du code rapide à 5 chiffres
+│   ├── share.ts           # Encodage / décodage du lien de partage (QR code)
+│   ├── stats.ts           # Compteurs agrégés anonymes (réassort)
 │   └── history.ts         # Historique localStorage
+├── hooks/
+│   └── useIdleTimer.ts    # Mode kiosque (retour auto à l'accueil)
 ├── components/
-│   ├── Home.tsx           # Écran d'accueil
+│   ├── Home.tsx           # Écran d'accueil + sélecteur de langue
 │   ├── Questionnaire.tsx  # Une question par écran + branchement
-│   ├── Results.tsx        # Top 3, annexes, phrase vendeur, copie
+│   ├── Results.tsx        # Top 3, prix, lien boutique, QR, phrase vendeur
+│   ├── ShareModal.tsx     # QR code « emporter ma sélection »
 │   ├── QuickCode.tsx      # Saisie du code rapide + légende
 │   ├── Search.tsx         # Recherche par numéro / nom
-│   └── History.tsx        # 10 derniers diagnostics
-├── App.tsx                # Navigation entre écrans
+│   ├── History.tsx        # 10 derniers diagnostics
+│   └── Stats.tsx          # Statistiques vendeur
+├── App.tsx                # Navigation + kiosque + lecture des liens partagés
 └── index.css              # Thème (blanc cassé / noir / doré)
 ```
 

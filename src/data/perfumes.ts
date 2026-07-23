@@ -33,6 +33,8 @@ export interface Perfume {
   notes: string[];
   description: string;
   match: string;
+  /** Prix spécifique en euros (optionnel : sinon SHOP.defaultPrice). */
+  price?: number;
 }
 
 export const perfumes: Perfume[] = [

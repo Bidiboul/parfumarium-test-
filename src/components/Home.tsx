@@ -13,9 +13,10 @@ interface HomeProps {
   onQuickCode: () => void;
   onSearch: () => void;
   onHistory: () => void;
+  onStats: () => void;
 }
 
-export default function Home({ onStart, onQuickCode, onSearch, onHistory }: HomeProps) {
+export default function Home({ onStart, onQuickCode, onSearch, onHistory, onStats }: HomeProps) {
   const { lang, setLang, t } = useI18n();
 
   return (
@@ -94,6 +95,9 @@ export default function Home({ onStart, onQuickCode, onSearch, onHistory }: Home
           </button>
           <button onClick={onHistory} className="underline-offset-4 transition hover:text-gold-dark hover:underline">
             Historique
+          </button>
+          <button onClick={onStats} className="underline-offset-4 transition hover:text-gold-dark hover:underline">
+            Statistiques
           </button>
         </div>
       </div>

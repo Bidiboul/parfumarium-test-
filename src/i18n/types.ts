@@ -36,6 +36,15 @@ export interface Translation {
     intensityLabels: [string, string, string, string];
     copyMain: string;
     copyExtras: string;
+    /* Partage / QR code */
+    shareButton: string;
+    shareTitle: string;
+    shareHint: string;
+    shareCopyLink: string;
+    close: string;
+    /* Boutique */
+    viewOnShop: string;
+    priceFrom: string;
   };
   /** Phrases de Thibault. */
   agent: {

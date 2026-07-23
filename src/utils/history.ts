@@ -4,6 +4,7 @@
  */
 
 import type { Answers } from "./recommendation";
+import type { Lang } from "../i18n/types";
 
 const STORAGE_KEY = "parfumarium-history";
 const MAX_ENTRIES = 10;
@@ -19,6 +20,8 @@ export interface HistoryEntry {
   top3: Array<{ id: string; name: string }>;
   /** Code rapide utilisé, le cas échéant. */
   code?: string;
+  /** Langue utilisée pour ce diagnostic. */
+  lang?: Lang;
 }
 
 export function loadHistory(): HistoryEntry[] {

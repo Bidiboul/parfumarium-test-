@@ -9,11 +9,14 @@
 
 import { useEffect, useMemo, useState } from "react";
 import AgentBubble from "./AgentBubble";
+import ShareModal from "./ShareModal";
 import { AGENT } from "../data/agent";
 import { useI18n, getDescription } from "../i18n";
 import { perfumes } from "../data/perfumes";
+import { formatPrice, productUrl } from "../data/shop";
 import { recommendPerfumes, type Answers, type PerfumeWithScore } from "../utils/recommendation";
 import { saveToHistory } from "../utils/history";
+import { recordStat } from "../utils/stats";
 
 interface ResultsProps {
   answers: Answers;
@@ -46,7 +49,7 @@ function MainCard({ perfume, rank }: { perfume: PerfumeWithScore; rank: number }
         <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-ink font-serif text-xl text-gold-light">
           {rank}
         </span>
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <h3 className="font-serif text-2xl leading-tight text-ink">
             <span className="text-gold-dark">{perfume.id}</span> — {perfume.name}
           </h3>
@@ -55,6 +58,10 @@ function MainCard({ perfume, rank }: { perfume: PerfumeWithScore; rank: number }
             <IntensityDots level={perfume.intensity} label={intensityLabel} />
           </p>
         </div>
+        {/* Prix */}
+        <span className="shrink-0 rounded-full bg-cream px-3 py-1 font-serif text-lg text-ink">
+          {formatPrice(perfume)}
+        </span>
       </div>
 
       {/* Style */}
@@ -80,31 +87,45 @@ function MainCard({ perfume, rank }: { perfume: PerfumeWithScore; rank: number }
         </ul>
       )}
 
-      {/* Correspondance olfactive, volontairement discrète */}
-      <p className="mt-3 border-t border-line pt-2 text-[11px] text-ink-soft/70">
-        {t.ui.correspondence} {perfume.match}
-      </p>
+      {/* Correspondance olfactive + lien boutique */}
+      <div className="mt-3 flex items-center justify-between gap-3 border-t border-line pt-2">
+        <p className="text-[11px] text-ink-soft/70">
+          {t.ui.correspondence} {perfume.match}
+        </p>
+        <a
+          href={productUrl(perfume)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="shrink-0 text-[11px] font-medium text-gold-dark underline-offset-2 hover:underline"
+        >
+          {t.ui.viewOnShop} →
+        </a>
+      </div>
     </article>
   );
 }
 
 export default function Results({ answers, code, fromHistory, onRestart, onHome }: ResultsProps) {
-  const { t } = useI18n();
+  const { lang, t } = useI18n();
   const { top3, extras, sellerPhrase } = useMemo(
     () => recommendPerfumes(answers, perfumes, t),
     [answers, t]
   );
   const [copied, setCopied] = useState(false);
+  const [sharing, setSharing] = useState(false);
 
-  // Enregistrer le diagnostic dans l'historique local (sauf relecture).
+  // Enregistrer le diagnostic dans l'historique + les statistiques
+  // locales (sauf lors de la relecture d'une entrée d'historique).
   useEffect(() => {
     if (fromHistory) return;
     saveToHistory({
       answers,
       code,
+      lang,
       top3: top3.map(({ id, name }) => ({ id, name })),
     });
-  }, [answers, code, top3, fromHistory]);
+    recordStat(answers, top3.map((p) => p.id), lang);
+  }, [answers, code, lang, top3, fromHistory]);
 
   /** Copie la sélection au format texte (presse-papiers). */
   const copySelection = async () => {
@@ -168,8 +189,16 @@ export default function Results({ answers, code, fromHistory, onRestart, onHome 
         </section>
       )}
 
+      {/* Emporter sa sélection (QR code) — action mise en avant */}
+      <button
+        onClick={() => setSharing(true)}
+        className="mt-8 flex w-full items-center justify-center gap-2 rounded-full bg-gold px-6 py-4 text-base font-medium text-white shadow-lg transition hover:bg-gold-dark active:scale-[0.98]"
+      >
+        <span aria-hidden>▣</span> {t.ui.shareButton}
+      </button>
+
       {/* Actions */}
-      <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+      <div className="mt-3 flex flex-col gap-3 sm:flex-row">
         <button
           onClick={copySelection}
           className="flex-1 rounded-full border border-ink px-6 py-3.5 text-base font-medium text-ink transition hover:border-gold hover:text-gold-dark active:scale-[0.98]"
@@ -186,6 +215,10 @@ export default function Results({ answers, code, fromHistory, onRestart, onHome 
       <button onClick={onHome} className="mt-3 w-full py-2 text-sm text-ink-soft underline-offset-4 hover:underline">
         {t.ui.backHome}
       </button>
+
+      {sharing && (
+        <ShareModal data={{ answers, lang, code }} onClose={() => setSharing(false)} />
+      )}
     </div>
   );
 }

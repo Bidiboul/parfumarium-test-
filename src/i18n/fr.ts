@@ -46,6 +46,13 @@ export const fr: Translation = {
     intensityLabels: ["Léger", "Moyen", "Fort", "Très puissant"],
     copyMain: "Sélection principale :",
     copyExtras: "À faire sentir en plus :",
+    shareButton: "Recevoir ma sélection",
+    shareTitle: "Emportez votre sélection",
+    shareHint: "Scannez ce QR code pour retrouver vos parfums sur votre téléphone et les commander sur parfumarium.fr.",
+    shareCopyLink: "Copier le lien",
+    close: "Fermer",
+    viewOnShop: "Voir sur parfumarium.fr",
+    priceFrom: "À partir de",
   },
   agent: {
     greeting: AGENT.greeting,

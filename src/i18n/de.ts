@@ -23,6 +23,13 @@ export const de: Translation = {
     intensityLabels: ["Leicht", "Mittel", "Stark", "Sehr stark"],
     copyMain: "Hauptauswahl:",
     copyExtras: "Außerdem zum Probieren:",
+    shareButton: "Meine Auswahl erhalten",
+    shareTitle: "Nehmen Sie Ihre Auswahl mit",
+    shareHint: "Scannen Sie diesen QR-Code, um Ihre Düfte auf Ihrem Handy wiederzufinden und auf parfumarium.fr zu bestellen.",
+    shareCopyLink: "Link kopieren",
+    close: "Schließen",
+    viewOnShop: "Auf parfumarium.fr ansehen",
+    priceFrom: "Ab",
   },
   agent: {
     greeting: "Hallo, ich bin Thibault, Ihr digitaler Duftberater.",

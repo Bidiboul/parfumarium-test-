@@ -23,6 +23,13 @@ export const en: Translation = {
     intensityLabels: ["Light", "Medium", "Strong", "Very strong"],
     copyMain: "Main selection:",
     copyExtras: "Also worth smelling:",
+    shareButton: "Get my selection",
+    shareTitle: "Take your selection with you",
+    shareHint: "Scan this QR code to find your perfumes on your phone and order them on parfumarium.fr.",
+    shareCopyLink: "Copy the link",
+    close: "Close",
+    viewOnShop: "View on parfumarium.fr",
+    priceFrom: "From",
   },
   agent: {
     greeting: "Hello, I'm Thibault, your digital fragrance advisor.",
