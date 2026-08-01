@@ -10,13 +10,16 @@
 import { useEffect, useMemo, useState } from "react";
 import AgentBubble from "./AgentBubble";
 import ShareModal from "./ShareModal";
+import PerfumeModal from "./PerfumeModal";
+import TestGuide from "./TestGuide";
 import { AGENT } from "../data/agent";
 import { useI18n, getDescription } from "../i18n";
-import { perfumes } from "../data/perfumes";
+import { perfumes, type Perfume } from "../data/perfumes";
 import { formatPrice, productUrl } from "../data/shop";
 import { recommendPerfumes, type Answers, type PerfumeWithScore } from "../utils/recommendation";
+import { buildProfile } from "../utils/profile";
 import { saveToHistory } from "../utils/history";
-import { recordStat } from "../utils/stats";
+import { recordStat, recordFeedback, type Feedback } from "../utils/stats";
 
 interface ResultsProps {
   answers: Answers;
@@ -39,7 +42,15 @@ function IntensityDots({ level, label }: { level: number; label: string }) {
 }
 
 /** Carte d'un parfum de la sélection principale. */
-function MainCard({ perfume, rank }: { perfume: PerfumeWithScore; rank: number }) {
+function MainCard({
+  perfume,
+  rank,
+  onDetails,
+}: {
+  perfume: PerfumeWithScore;
+  rank: number;
+  onDetails: () => void;
+}) {
   const { lang, t } = useI18n();
   const intensityLabel = t.ui.intensityLabels[perfume.intensity - 1];
 
@@ -64,8 +75,13 @@ function MainCard({ perfume, rank }: { perfume: PerfumeWithScore; rank: number }
         </span>
       </div>
 
-      {/* Style */}
+      {/* Style + disponibilité */}
       <div className="mt-3 flex flex-wrap gap-1.5">
+        {perfume.inStock === false && (
+          <span className="rounded-full bg-gold-light px-2.5 py-0.5 text-xs font-medium text-gold-dark">
+            {t.ui.outOfStock}
+          </span>
+        )}
         {perfume.styles.slice(0, 4).map((s) => (
           <span key={s} className="rounded-full border border-gold-light bg-cream px-2.5 py-0.5 text-xs text-gold-dark capitalize">
             {t.styleChips[s] ?? s}
@@ -86,6 +102,14 @@ function MainCard({ perfume, rank }: { perfume: PerfumeWithScore; rank: number }
           ))}
         </ul>
       )}
+
+      {/* Fiche détaillée */}
+      <button
+        onClick={onDetails}
+        className="mt-4 w-full rounded-full border border-line px-5 py-2.5 text-sm font-medium text-ink transition hover:border-gold hover:text-gold-dark active:scale-[0.98]"
+      >
+        {t.ui.detailsButton}
+      </button>
 
       {/* Correspondance olfactive + lien boutique */}
       <div className="mt-3 flex items-center justify-between gap-3 border-t border-line pt-2">
@@ -111,8 +135,18 @@ export default function Results({ answers, code, fromHistory, onRestart, onHome 
     () => recommendPerfumes(answers, perfumes, t),
     [answers, t]
   );
+  const profile = useMemo(() => buildProfile(answers, t), [answers, t]);
   const [copied, setCopied] = useState(false);
   const [sharing, setSharing] = useState(false);
+  const [details, setDetails] = useState<Perfume | null>(null);
+  const [guiding, setGuiding] = useState(false);
+  const [rated, setRated] = useState(false);
+
+  /** Avis rapide du client sur la sélection. */
+  const rate = (value: Feedback) => {
+    recordFeedback(value);
+    setRated(true);
+  };
 
   // Enregistrer le diagnostic dans l'historique + les statistiques
   // locales (sauf lors de la relecture d'une entrée d'historique).
@@ -155,12 +189,30 @@ export default function Results({ answers, code, fromHistory, onRestart, onHome 
         <AgentBubble message={t.agent.resultIntro} compact />
       </div>
 
+      {/* Profil olfactif nommé */}
+      <section className="animate-fade-up mt-5 rounded-3xl border border-gold bg-paper p-5 text-center">
+        <p className="text-[11px] font-semibold tracking-[0.3em] text-gold uppercase">
+          {t.ui.profileKicker}
+        </p>
+        <p className="mt-2 font-serif text-3xl leading-tight text-ink">{profile.name}</p>
+        <div className="mx-auto mt-3 h-px w-12 bg-gold-light" />
+        <p className="mt-3 text-sm leading-relaxed text-ink-soft">{profile.sentence}</p>
+      </section>
+
       {/* Top 3 */}
       <div className="mt-5 space-y-4">
         {top3.map((p, i) => (
-          <MainCard key={p.id} perfume={p} rank={i + 1} />
+          <MainCard key={p.id} perfume={p} rank={i + 1} onDetails={() => setDetails(p)} />
         ))}
       </div>
+
+      {/* Conseil d'essai olfactif */}
+      <button
+        onClick={() => setGuiding(true)}
+        className="mt-4 w-full rounded-2xl border border-dashed border-gold-light bg-paper px-5 py-3 text-sm font-medium text-gold-dark transition hover:border-gold"
+      >
+        ✻ {t.ui.testGuideButton}
+      </button>
 
       {/* Le mot de Thibault (phrase vendeur) */}
       <section className="animate-fade-up mt-8 rounded-3xl bg-ink p-5 text-cream">
@@ -176,14 +228,18 @@ export default function Results({ answers, code, fromHistory, onRestart, onHome 
           <h3 className="font-serif text-2xl text-ink">{t.ui.extrasTitle}</h3>
           <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
             {extras.map((p) => (
-              <div key={p.id} className="rounded-2xl border border-line bg-paper px-4 py-3">
+              <button
+                key={p.id}
+                onClick={() => setDetails(p)}
+                className="rounded-2xl border border-line bg-paper px-4 py-3 text-left transition hover:border-gold"
+              >
                 <p className="font-medium text-ink">
                   <span className="text-gold-dark">{p.id}</span> — {p.name}
                 </p>
                 <p className="mt-0.5 text-xs text-ink-soft">
                   {p.family} · {t.ui.intensityLabels[p.intensity - 1]}
                 </p>
-              </div>
+              </button>
             ))}
           </div>
         </section>
@@ -216,9 +272,38 @@ export default function Results({ answers, code, fromHistory, onRestart, onHome 
         {t.ui.backHome}
       </button>
 
+      {/* Avis rapide sur la sélection */}
+      <div className="mt-8 border-t border-line pt-5 text-center">
+        {rated ? (
+          <p className="text-sm text-gold-dark">{t.ui.feedbackThanks}</p>
+        ) : (
+          <>
+            <p className="text-sm text-ink-soft">{t.ui.feedbackQuestion}</p>
+            <div className="mt-3 flex justify-center gap-3">
+              {([
+                ["good", "😍"],
+                ["ok", "🙂"],
+                ["bad", "😕"],
+              ] as Array<[Feedback, string]>).map(([value, emoji]) => (
+                <button
+                  key={value}
+                  onClick={() => rate(value)}
+                  aria-label={value}
+                  className="flex h-12 w-12 items-center justify-center rounded-full border border-line bg-paper text-xl transition hover:border-gold active:scale-[0.95]"
+                >
+                  {emoji}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+
       {sharing && (
         <ShareModal data={{ answers, lang, code }} onClose={() => setSharing(false)} />
       )}
+      {details && <PerfumeModal perfume={details} onClose={() => setDetails(null)} />}
+      {guiding && <TestGuide onClose={() => setGuiding(false)} />}
     </div>
   );
 }

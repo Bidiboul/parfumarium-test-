@@ -10,13 +10,21 @@ import { useI18n, LANGUAGES } from "../i18n";
 
 interface HomeProps {
   onStart: () => void;
+  onEquivalence: () => void;
   onQuickCode: () => void;
   onSearch: () => void;
   onHistory: () => void;
   onStats: () => void;
 }
 
-export default function Home({ onStart, onQuickCode, onSearch, onHistory, onStats }: HomeProps) {
+export default function Home({
+  onStart,
+  onEquivalence,
+  onQuickCode,
+  onSearch,
+  onHistory,
+  onStats,
+}: HomeProps) {
   const { lang, setLang, t } = useI18n();
 
   return (
@@ -76,6 +84,14 @@ export default function Home({ onStart, onQuickCode, onSearch, onHistory, onStat
           className="mt-6 w-full max-w-sm rounded-full bg-ink px-8 py-4 text-base font-medium tracking-wide text-cream shadow-lg transition hover:bg-gold-dark active:scale-[0.98]"
         >
           {t.ui.start}
+        </button>
+
+        {/* Raccourci : le client connaît déjà un parfum */}
+        <button
+          onClick={onEquivalence}
+          className="mt-3 w-full max-w-sm rounded-full border border-gold bg-paper px-8 py-4 text-base font-medium text-gold-dark transition hover:bg-gold hover:text-white active:scale-[0.98]"
+        >
+          {t.ui.equivalenceButton}
         </button>
 
         <p className="mt-4 text-sm text-ink-soft">{t.ui.subtext}</p>

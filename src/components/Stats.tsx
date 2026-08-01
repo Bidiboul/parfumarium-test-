@@ -19,6 +19,17 @@ const perfumeName = (id: string): string => {
   return p ? `${p.id} — ${p.name}` : id;
 };
 
+/** Libellés des étapes du questionnaire, pour les abandons. */
+const STEP_LABELS: Record<string, string> = {
+  genderTarget: "Q1 — Pour qui",
+  mainFamily: "Q2 — Univers",
+  subPreference: "Sous-question",
+  usage: "Q3 — Utilisation",
+  intensity: "Q4 — Puissance",
+  style: "Q5 — Style",
+  avoid: "Q6 — À éviter",
+};
+
 /** Barre de proportion dorée pour un item du classement. */
 function Bar({ label, value, max }: { label: string; value: number; max: number }) {
   const pct = max > 0 ? Math.round((value / max) * 100) : 0;
@@ -47,9 +58,12 @@ export default function Stats({ onBack }: StatsProps) {
   const genders = topEntries(stats.genders, 6);
   const topPerfumes = topEntries(stats.perfumes, 8);
   const langs = topEntries(stats.langs, 5);
+  const abandons = topEntries(stats.abandons, 7);
   const maxFamily = families[0]?.[1] ?? 0;
   const maxGender = genders[0]?.[1] ?? 0;
   const maxPerfume = topPerfumes[0]?.[1] ?? 0;
+  const maxAbandon = abandons[0]?.[1] ?? 0;
+  const totalFeedback = Object.values(stats.feedback).reduce((a, b) => a + b, 0);
 
   return (
     <div className="animate-fade-up mx-auto w-full max-w-xl px-5 pb-14 pt-6">
@@ -64,7 +78,7 @@ export default function Stats({ onBack }: StatsProps) {
       <h2 className="mt-6 font-serif text-3xl text-ink">Statistiques</h2>
       <p className="mt-1 text-sm text-ink-soft">Synthèse locale et anonyme, sur cet appareil.</p>
 
-      {stats.total === 0 ? (
+      {stats.total === 0 && abandons.length === 0 && totalFeedback === 0 ? (
         <p className="mt-8 rounded-2xl border border-dashed border-line px-4 py-10 text-center text-sm text-ink-soft">
           Aucun diagnostic enregistré pour le moment.
         </p>
@@ -127,6 +141,40 @@ export default function Stats({ onBack }: StatsProps) {
               </div>
             </section>
           </div>
+
+          {/* Satisfaction */}
+          {totalFeedback > 0 && (
+            <section className="mt-6 rounded-3xl border border-line bg-paper p-5">
+              <h3 className="font-serif text-xl text-ink">Avis sur les sélections</h3>
+              <div className="mt-4 flex justify-around text-center">
+                {([
+                  ["good", "😍"],
+                  ["ok", "🙂"],
+                  ["bad", "😕"],
+                ] as const).map(([key, emoji]) => (
+                  <div key={key}>
+                    <p className="text-2xl">{emoji}</p>
+                    <p className="mt-1 font-serif text-2xl text-ink">{stats.feedback[key] ?? 0}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Points d'abandon */}
+          {abandons.length > 0 && (
+            <section className="mt-6 rounded-3xl border border-line bg-paper p-5">
+              <h3 className="font-serif text-xl text-ink">Questionnaires abandonnés</h3>
+              <p className="mt-0.5 text-xs text-ink-soft">
+                Étape à laquelle le client s'est arrêté — utile pour raccourcir le parcours.
+              </p>
+              <div className="mt-4 space-y-3">
+                {abandons.map(([key, value]) => (
+                  <Bar key={key} label={STEP_LABELS[key] ?? key} value={value} max={maxAbandon} />
+                ))}
+              </div>
+            </section>
+          )}
 
           <button
             onClick={reset}

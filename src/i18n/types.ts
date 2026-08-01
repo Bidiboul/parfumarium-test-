@@ -45,6 +45,44 @@ export interface Translation {
     /* Boutique */
     viewOnShop: string;
     priceFrom: string;
+    outOfStock: string;
+    /* Recherche par équivalence */
+    equivalenceButton: string;
+    equivalenceKicker: string;
+    equivalenceTitle: string;
+    equivalenceHint: string;
+    equivalencePlaceholder: string;
+    equivalenceResult: string;
+    equivalenceAlternatives: string;
+    equivalenceEmpty: string;
+    equivalenceExamples: string;
+    /* Fiche parfum détaillée */
+    detailsButton: string;
+    notesTitle: string;
+    occasionsTitle: string;
+    stylesTitle: string;
+    /* Guide d'essai olfactif */
+    testGuideButton: string;
+    testGuideTitle: string;
+    testGuideSteps: [string, string, string];
+    testGuideStart: string;
+    testGuideRunning: (s: string) => string;
+    testGuideDone: string;
+    /* Avis rapide */
+    feedbackQuestion: string;
+    feedbackThanks: string;
+    /* Profil olfactif */
+    profileKicker: string;
+  };
+  /** Profil olfactif nommé (ex. « Gourmand Sensuel »). */
+  profile: {
+    /** Nom du profil par famille olfactive. */
+    nouns: Record<string, string>;
+    /** Qualificatif du profil par style. */
+    adjectives: Record<string, string>;
+    fallbackNoun: string;
+    fallbackAdjective: string;
+    sentence: (family: string, intensity: string, style: string) => string;
   };
   /** Phrases de Thibault. */
   agent: {

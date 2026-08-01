@@ -12,6 +12,9 @@ import type { Lang } from "../i18n/types";
 
 const STORAGE_KEY = "parfumarium-stats";
 
+/** Avis rapide du client sur la sélection proposée. */
+export type Feedback = "good" | "ok" | "bad";
+
 export interface Stats {
   /** Nombre total de diagnostics réalisés. */
   total: number;
@@ -23,9 +26,21 @@ export interface Stats {
   langs: Record<string, number>;
   /** Nombre de fois où un parfum est apparu dans un top 3 (clé = id). */
   perfumes: Record<string, number>;
+  /** Questionnaires abandonnés, par étape où le client s'est arrêté. */
+  abandons: Record<string, number>;
+  /** Avis rapides sur les sélections. */
+  feedback: Record<string, number>;
 }
 
-const empty = (): Stats => ({ total: 0, families: {}, genders: {}, langs: {}, perfumes: {} });
+const empty = (): Stats => ({
+  total: 0,
+  families: {},
+  genders: {},
+  langs: {},
+  perfumes: {},
+  abandons: {},
+  feedback: {},
+});
 
 export function loadStats(): Stats {
   try {
@@ -52,6 +67,31 @@ export function recordStat(answers: Answers, top3Ids: string[], lang: Lang): voi
     localStorage.setItem(STORAGE_KEY, JSON.stringify(stats));
   } catch {
     // localStorage indisponible : on ignore.
+  }
+}
+
+/**
+ * Enregistre l'abandon d'un questionnaire, avec la question atteinte.
+ * Permet de repérer l'étape qui fait décrocher les clients.
+ */
+export function recordAbandon(stepKey: string): void {
+  try {
+    const stats = loadStats();
+    bump(stats.abandons, stepKey);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(stats));
+  } catch {
+    // Ignoré.
+  }
+}
+
+/** Enregistre l'avis rapide du client sur sa sélection. */
+export function recordFeedback(value: Feedback): void {
+  try {
+    const stats = loadStats();
+    bump(stats.feedback, value);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(stats));
+  } catch {
+    // Ignoré.
   }
 }
 

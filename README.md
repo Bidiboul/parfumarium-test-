@@ -30,6 +30,13 @@ npm run preview    # prévisualisation du build
 
 ## Fonctionnalités
 
+- **Recherche par équivalence** : le client indique un parfum de marque qu'il connaît (« Black Opium », « Sauvage »…) et obtient immédiatement la référence Parfumarium correspondante, avec des alternatives dans le même esprit. Recherche tolérante aux accents, par nom, maison ou numéro (`src/utils/equivalence.ts`).
+- **Profil olfactif nommé** : chaque diagnostic donne un profil (« Gourmand Sensuel », « Boisé Magnétique »…) affiché en tête du résultat, traduit dans les 5 langues (`src/utils/profile.ts`).
+- **Fiche parfum détaillée** : au clic sur un parfum, notes olfactives, jauge d'intensité, moments conseillés, style, prix et lien boutique (`src/components/PerfumeModal.tsx`).
+- **Guide d'essai olfactif** : les trois bons gestes et un minuteur de 2 minutes pour laisser le parfum se révéler (`src/components/TestGuide.tsx`).
+- **Espace vendeur protégé** : code à 4 chiffres (défini dans `src/data/config.ts`) devant le code rapide, la recherche, l'historique et les statistiques ; re-verrouillé à chaque retour kiosque.
+- **Disponibilité** : champ `inStock` optionnel — un parfum « sur commande » reste proposé mais passe derrière les références disponibles.
+- **Avis client & points d'abandon** : avis rapide en trois émojis et suivi de l'étape où les clients quittent le questionnaire, visibles dans les statistiques.
 - **5 langues** : français (par défaut), anglais, allemand, espagnol, italien. Le sélecteur est sur l'écran d'accueil ; tout le parcours client est traduit (questions, phrases de Thibault, raisons, descriptions des parfums). Les écrans vendeur restent en français. Traductions dans `src/i18n/`.
 - **Diagnostic guidé** : 6 questions (+ 1 sous-question selon l'univers choisi), une question par écran, barre de progression, bouton retour.
 - **Code rapide** : le vendeur entre un code à 5 chiffres (ex. `14134`) pour afficher directement la sélection — cible / famille / occasion / puissance / style.
@@ -49,6 +56,7 @@ src/
 ├── data/
 │   ├── perfumes.ts        # Catalogue des parfums (modifiable facilement)
 │   ├── agent.ts           # Thibault : nom et phrases d'accompagnement
+│   ├── config.ts          # Code vendeur, durée du minuteur d'essai
 │   ├── shop.ts            # Config boutique : URL, devise, prix, liens produits
 │   └── questions.ts       # Questions, options et correspondances de tags
 ├── i18n/
@@ -60,6 +68,8 @@ src/
 │   ├── recommendation.ts  # Algorithme de scoring et de recommandation
 │   ├── quickCode.ts       # Décodage du code rapide à 5 chiffres
 │   ├── share.ts           # Encodage / décodage du lien de partage (QR code)
+│   ├── equivalence.ts     # Recherche « quel parfum portez-vous ? »
+│   ├── profile.ts         # Profil olfactif nommé
 │   ├── stats.ts           # Compteurs agrégés anonymes (réassort)
 │   └── history.ts         # Historique localStorage
 ├── hooks/
@@ -67,8 +77,12 @@ src/
 ├── components/
 │   ├── Home.tsx           # Écran d'accueil + sélecteur de langue
 │   ├── Questionnaire.tsx  # Une question par écran + branchement
-│   ├── Results.tsx        # Top 3, prix, lien boutique, QR, phrase vendeur
+│   ├── Results.tsx        # Profil, top 3, prix, QR, mot de Thibault
+│   ├── Equivalence.tsx    # « Quel parfum portez-vous ? »
+│   ├── PerfumeModal.tsx   # Fiche parfum détaillée
+│   ├── TestGuide.tsx      # Guide d'essai olfactif + minuteur
 │   ├── ShareModal.tsx     # QR code « emporter ma sélection »
+│   ├── SellerGate.tsx     # Code d'accès à l'espace vendeur
 │   ├── QuickCode.tsx      # Saisie du code rapide + légende
 │   ├── Search.tsx         # Recherche par numéro / nom
 │   ├── History.tsx        # 10 derniers diagnostics
@@ -76,6 +90,11 @@ src/
 ├── App.tsx                # Navigation + kiosque + lecture des liens partagés
 └── index.css              # Thème (blanc cassé / noir / doré)
 ```
+
+## Avant la mise en boutique
+
+Personnalisez [`src/data/config.ts`](src/data/config.ts) (**code d'accès vendeur**, par défaut `1234`)
+et [`src/data/shop.ts`](src/data/shop.ts) (prix et structure des liens vers parfumarium.fr).
 
 ## Modifier le catalogue
 

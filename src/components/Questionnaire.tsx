@@ -5,8 +5,9 @@
  * Tous les textes proviennent de la langue sélectionnée.
  */
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import AgentBubble from "./AgentBubble";
+import { recordAbandon } from "../utils/stats";
 import { useI18n, type Translation } from "../i18n";
 import type { Answers } from "../utils/recommendation";
 import {
@@ -83,6 +84,19 @@ export default function Questionnaire({ onFinish, onQuit }: QuestionnaireProps) 
   const progress = ((stepIndex + 1) / steps.length) * 100;
   const isLast = stepIndex === steps.length - 1;
 
+  // Suivi des abandons : on retient l'étape en cours et, si le
+  // questionnaire est quitté sans être terminé (retour ou mode
+  // kiosque), on l'enregistre dans les statistiques.
+  const currentStepKey = useRef<string>(step.key);
+  currentStepKey.current = step.key;
+  const finished = useRef(false);
+  useEffect(
+    () => () => {
+      if (!finished.current) recordAbandon(currentStepKey.current);
+    },
+    []
+  );
+
   /** Sélection d'une réponse simple : enregistre puis passe à la suite. */
   const selectSingle = (value: string) => {
     setDraft((d) => {
@@ -112,6 +126,7 @@ export default function Questionnaire({ onFinish, onQuit }: QuestionnaireProps) 
   };
 
   const finish = () => {
+    finished.current = true;
     // Toutes les étapes simples ont été remplies pour arriver ici.
     onFinish({
       genderTarget: draft.genderTarget!,

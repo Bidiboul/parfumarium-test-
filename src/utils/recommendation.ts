@@ -205,6 +205,11 @@ const scorePerfume = (p: Perfume, answers: Answers, t: Translation): PerfumeWith
   if (usage?.discret && p.intensity >= 3) {
     score -= 30; // trop présent pour un usage discret
   }
+  // Léger recul des références « sur commande » : elles restent
+  // proposables, mais les parfums disponibles passent devant.
+  if (p.inStock === false) {
+    score -= 12;
+  }
 
   return { ...p, score, reasons, penalized };
 };

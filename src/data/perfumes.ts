@@ -35,6 +35,12 @@ export interface Perfume {
   match: string;
   /** Prix spécifique en euros (optionnel : sinon SHOP.defaultPrice). */
   price?: number;
+  /**
+   * Disponibilité en boutique. Mettre `false` pour signaler « sur
+   * commande » : le parfum reste proposé mais passe légèrement
+   * derrière les références disponibles. Absent = en stock.
+   */
+  inStock?: boolean;
 }
 
 export const perfumes: Perfume[] = [

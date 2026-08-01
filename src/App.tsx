@@ -13,16 +13,26 @@ import { I18nProvider, useI18n } from "./i18n";
 import Home from "./components/Home";
 import Questionnaire from "./components/Questionnaire";
 import Results from "./components/Results";
+import Equivalence from "./components/Equivalence";
 import QuickCode from "./components/QuickCode";
 import Search from "./components/Search";
 import History from "./components/History";
 import Stats from "./components/Stats";
+import SellerGate from "./components/SellerGate";
 import { useIdleTimer } from "./hooks/useIdleTimer";
 import { readSharedDiagnostic, clearShareParam } from "./utils/share";
 import type { Answers } from "./utils/recommendation";
 import type { HistoryEntry } from "./utils/history";
 
-type Screen = "home" | "quiz" | "results" | "code" | "search" | "history" | "stats";
+type Screen =
+  | "home"
+  | "quiz"
+  | "results"
+  | "equivalence"
+  | "code"
+  | "search"
+  | "history"
+  | "stats";
 
 interface ResultState {
   answers: Answers;
@@ -37,6 +47,16 @@ function AppContent() {
   const { setLang } = useI18n();
   const [screen, setScreen] = useState<Screen>("home");
   const [result, setResult] = useState<ResultState | null>(null);
+  /** Espace vendeur déverrouillé (jusqu'au prochain retour kiosque). */
+  const [sellerUnlocked, setSellerUnlocked] = useState(false);
+  /** Écran vendeur demandé, en attente de saisie du code. */
+  const [pendingScreen, setPendingScreen] = useState<Screen | null>(null);
+
+  /** Ouvre un écran vendeur, en demandant le code si nécessaire. */
+  const openSellerScreen = (target: Screen) => {
+    if (sellerUnlocked) return setScreen(target);
+    setPendingScreen(target);
+  };
 
   const showResults = (state: ResultState) => {
     setResult(state);
@@ -63,9 +83,28 @@ function AppContent() {
   const returnToHome = () => {
     setScreen("home");
     setResult(null);
+    setPendingScreen(null);
+    // Re-verrouiller l'espace vendeur : la borne redevient publique.
+    setSellerUnlocked(false);
     setLang(DEFAULT_LANG);
   };
-  useIdleTimer(returnToHome, screen !== "home");
+  useIdleTimer(returnToHome, screen !== "home" || pendingScreen !== null);
+
+  // Saisie du code vendeur avant d'ouvrir un écran réservé.
+  if (pendingScreen) {
+    return (
+      <div className="min-h-dvh bg-cream">
+        <SellerGate
+          onUnlock={() => {
+            setSellerUnlocked(true);
+            setScreen(pendingScreen);
+            setPendingScreen(null);
+          }}
+          onBack={() => setPendingScreen(null)}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-dvh bg-cream">
@@ -84,12 +123,15 @@ function AppContent() {
       {screen === "home" && (
         <Home
           onStart={() => setScreen("quiz")}
-          onQuickCode={() => setScreen("code")}
-          onSearch={() => setScreen("search")}
-          onHistory={() => setScreen("history")}
-          onStats={() => setScreen("stats")}
+          onEquivalence={() => setScreen("equivalence")}
+          onQuickCode={() => openSellerScreen("code")}
+          onSearch={() => openSellerScreen("search")}
+          onHistory={() => openSellerScreen("history")}
+          onStats={() => openSellerScreen("stats")}
         />
       )}
+
+      {screen === "equivalence" && <Equivalence onBack={() => setScreen("home")} />}
 
       {screen === "quiz" && (
         <Questionnaire
