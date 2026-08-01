@@ -34,7 +34,7 @@ export default function SellerGate({ onUnlock, onBack }: SellerGateProps) {
   };
 
   return (
-    <div className="animate-fade-up mx-auto flex w-full max-w-xs flex-col items-center px-5 pb-14 pt-10 text-center">
+    <div className="animate-scale-in mx-auto flex w-full max-w-xs flex-col items-center px-5 pb-14 pt-10 text-center">
       <span
         aria-hidden
         className="flex h-14 w-14 items-center justify-center rounded-full border border-gold bg-paper text-gold-dark"
@@ -68,7 +68,7 @@ export default function SellerGate({ onUnlock, onBack }: SellerGateProps) {
           <button
             key={d}
             onClick={() => press(d)}
-            className="h-16 w-16 rounded-full border border-line bg-paper font-serif text-2xl text-ink transition hover:border-gold active:scale-[0.95]"
+            className="lift h-16 w-16 rounded-full border border-line bg-paper font-serif text-2xl text-ink shadow-[var(--shadow-card)] hover:border-gold hover:text-gold-dark"
           >
             {d}
           </button>
@@ -81,7 +81,7 @@ export default function SellerGate({ onUnlock, onBack }: SellerGateProps) {
         </button>
         <button
           onClick={() => press("0")}
-          className="h-16 w-16 rounded-full border border-line bg-paper font-serif text-2xl text-ink transition hover:border-gold active:scale-[0.95]"
+          className="lift h-16 w-16 rounded-full border border-line bg-paper font-serif text-2xl text-ink shadow-[var(--shadow-card)] hover:border-gold hover:text-gold-dark"
         >
           0
         </button>

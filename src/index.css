@@ -1,11 +1,59 @@
 @import "tailwindcss";
 
-/*
-  Thème Parfumarium — premium, sobre, élégant.
-  Palette : blanc cassé / noir / doré léger.
-*/
+/* ==========================================================================
+   Polices auto-hébergées (fonctionnent hors-ligne, mode PWA)
+   Cormorant Garamond : titres, chiffres, tout ce qui doit respirer le luxe.
+   Inter : textes courants, très lisible sur tablette.
+   Ce sont des polices variables : un seul fichier couvre toutes les graisses.
+   ========================================================================== */
+@font-face {
+  font-family: "Cormorant Garamond";
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url("/fonts/cormorant-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Cormorant Garamond";
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url("/fonts/cormorant-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF,
+    U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020,
+    U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url("/fonts/inter-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url("/fonts/inter-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF,
+    U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020,
+    U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* ==========================================================================
+   Thème Parfumarium — premium, sobre, élégant.
+   Palette : blanc cassé / noir / doré léger.
+   ========================================================================== */
 @theme {
   --color-cream: #f7f4ed;
+  --color-cream-deep: #f1ece1;
   --color-paper: #fffdf8;
   --color-ink: #1c1913;
   --color-ink-soft: #57503f;
@@ -16,35 +64,232 @@
 
   --font-serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
   --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Courbes d'animation : douces, jamais mécaniques. */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Ombres en couches : plus réalistes qu'une ombre unique. */
+  --shadow-card: 0 1px 2px rgb(28 25 19 / 0.04), 0 4px 12px rgb(28 25 19 / 0.04);
+  --shadow-lift: 0 2px 4px rgb(28 25 19 / 0.05), 0 12px 28px rgb(28 25 19 / 0.09);
+  --shadow-modal: 0 8px 20px rgb(28 25 19 / 0.14), 0 32px 64px rgb(28 25 19 / 0.22);
+  --shadow-gold: 0 4px 14px rgb(169 136 74 / 0.32);
 }
 
+/* --------------------------------------------------------------------------
+   Base
+   -------------------------------------------------------------------------- */
 html {
   background-color: var(--color-cream);
+  -webkit-tap-highlight-color: transparent;
+  scroll-behavior: smooth;
 }
 
 body {
   font-family: var(--font-sans);
   color: var(--color-ink);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  min-height: 100dvh;
 }
 
-/* Apparition douce des écrans */
+/* Dégradé très léger : donne de la profondeur au fond crème.
+   Posé sur une couche fixe plutôt que via `background-attachment: fixed`,
+   qui provoque des saccades au défilement sur tablette. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(1100px 560px at 50% -8%, #fffdf8 0%, transparent 70%),
+    linear-gradient(180deg, var(--color-cream) 0%, var(--color-cream-deep) 100%);
+}
+
+/* Grain discret : casse le côté « plat » des aplats de couleur. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+#root {
+  position: relative;
+  z-index: 1;
+}
+
+/* Titres : le serif mérite un vrai réglage optique. */
+h1,
+h2,
+h3 {
+  font-variant-numeric: lining-nums;
+  letter-spacing: -0.011em;
+}
+
+/* --------------------------------------------------------------------------
+   Animations
+   -------------------------------------------------------------------------- */
 @keyframes fade-up {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translate3d(0, 14px, 0);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Reflet doré qui traverse la barre de progression. */
+@keyframes sheen {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(320%);
+  }
+}
+
+/* Halo respirant autour du monogramme de Thibault. */
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.12);
+    opacity: 0.15;
   }
 }
 
 .animate-fade-up {
-  animation: fade-up 0.35s ease-out both;
+  animation: fade-up 0.55s var(--ease-out-soft) both;
 }
 
-/* Barre de progression animée */
+.animate-scale-in {
+  animation: scale-in 0.4s var(--ease-spring) both;
+}
+
+.animate-backdrop {
+  animation: backdrop-in 0.25s ease-out both;
+}
+
+.animate-breathe {
+  animation: breathe 4.5s ease-in-out infinite;
+}
+
+/* Apparition en cascade : `style={{ '--i': index }}` sur chaque enfant.
+   Le délai est plafonné pour que les longues listes (16 univers
+   olfactifs) restent vives : la cascade se termine en ~0,4 s. */
+.stagger {
+  animation-delay: min(calc(var(--i, 0) * 50ms), 400ms);
+}
+
+/* --------------------------------------------------------------------------
+   Éléments récurrents
+   -------------------------------------------------------------------------- */
+
+/* Barre de progression avec reflet. */
 .progress-fill {
-  transition: width 0.35s ease;
+  position: relative;
+  overflow: hidden;
+  transition: width 0.55s var(--ease-out-soft);
+}
+
+.progress-fill::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 40%;
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.55), transparent);
+  animation: sheen 2.6s ease-in-out infinite;
+}
+
+/* Boutons et cartes cliquables : léger soulèvement au survol,
+   enfoncement franc au toucher. */
+.lift {
+  transition:
+    transform 0.28s var(--ease-out-soft),
+    box-shadow 0.28s var(--ease-out-soft),
+    border-color 0.28s var(--ease-out-soft),
+    background-color 0.28s var(--ease-out-soft),
+    color 0.28s var(--ease-out-soft);
+}
+
+@media (hover: hover) {
+  .lift:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lift);
+  }
+}
+
+.lift:active {
+  transform: translateY(0) scale(0.985);
+  transition-duration: 0.09s;
+}
+
+/* Filet doré décoratif. */
+.rule-gold {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-gold) 35%,
+    var(--color-gold) 65%,
+    transparent
+  );
+}
+
+/* Barre de défilement discrète, assortie au thème. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-gold-light) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--color-gold-light);
+  border-radius: 999px;
+}
+
+/* Accessibilité : respecter les préférences de mouvement réduit. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

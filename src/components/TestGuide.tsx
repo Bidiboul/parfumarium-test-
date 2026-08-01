@@ -38,13 +38,13 @@ export default function TestGuide({ onClose }: TestGuideProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-ink/60 px-5 backdrop-blur-sm"
+      className="animate-backdrop fixed inset-0 z-50 flex items-center justify-center bg-ink/55 px-5 backdrop-blur-md"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
     >
       <div
-        className="animate-fade-up w-full max-w-sm rounded-3xl border border-line bg-paper p-6 shadow-2xl"
+        className="animate-scale-in w-full max-w-sm rounded-3xl border border-line bg-paper p-6 shadow-[var(--shadow-modal)]"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center gap-3">

@@ -11,6 +11,12 @@ export default defineConfig({
     VitePWA({
       registerType: "autoUpdate",
       includeAssets: ["apple-touch-icon.png"],
+      workbox: {
+        // Les polices auto-hébergées doivent être précachées pour que la
+        // borne reste identique sans réseau (woff2 est hors des motifs
+        // pris en compte par défaut).
+        globPatterns: ["**/*.{js,css,html,ico,png,svg,webmanifest,woff2}"],
+      },
       manifest: {
         name: "Diagnostic Olfactif Parfumarium",
         short_name: "Parfumarium",

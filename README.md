@@ -28,6 +28,24 @@ npm run preview    # prévisualisation du build
 - Tailwind CSS v4
 - Aucun backend — tout est local (localStorage pour l'historique)
 
+## Design
+
+Direction premium, sobre et élégante : blanc cassé / noir / doré léger.
+
+- **Typographie** : Cormorant Garamond (titres) et Inter (textes), **auto-hébergées**
+  dans `public/fonts` et précachées par le service worker — le rendu reste identique hors-ligne,
+  sans aucun appel à un CDN.
+- **Profondeur** : dégradé de fond fixe, grain très léger, ombres en couches (`--shadow-card`,
+  `--shadow-lift`, `--shadow-modal`, `--shadow-gold`).
+- **Mouvement** : apparitions en cascade plafonnées à 0,4 s, courbes douces (`--ease-out-soft`,
+  `--ease-spring`), soulèvement au survol et enfoncement au toucher (classe `.lift`),
+  reflet animé sur la barre de progression, modales en fondu + léger rebond.
+- **Accessibilité** : `prefers-reduced-motion` désactive toutes les animations ;
+  cibles tactiles généreuses ; aucun défilement horizontal.
+
+Tous les réglages visuels (couleurs, ombres, courbes, animations) sont centralisés
+dans [`src/index.css`](src/index.css).
+
 ## Fonctionnalités
 
 - **Recherche par équivalence** : le client indique un parfum de marque qu'il connaît (« Black Opium », « Sauvage »…) et obtient immédiatement la référence Parfumarium correspondante, avec des alternatives dans le même esprit. Recherche tolérante aux accents, par nom, maison ou numéro (`src/utils/equivalence.ts`).

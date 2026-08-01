@@ -88,11 +88,12 @@ export default function Equivalence({ onBack }: EquivalenceProps) {
       {/* Liste des correspondances */}
       {!selected && query.trim().length >= 2 && (
         <div className="mt-5 space-y-2">
-          {results.map((match) => (
+          {results.map((match, i) => (
             <button
               key={match.perfume.id}
               onClick={() => setSelected(match)}
-              className="flex w-full items-center justify-between gap-3 rounded-2xl border border-line bg-paper px-4 py-3 text-left transition hover:border-gold"
+              style={{ "--i": i } as React.CSSProperties}
+              className="lift stagger animate-fade-up flex w-full items-center justify-between gap-3 rounded-2xl border border-line bg-paper px-4 py-3.5 text-left shadow-[var(--shadow-card)] hover:border-gold"
             >
               <span className="min-w-0">
                 <span className="block font-medium text-ink">{match.brandName}</span>
@@ -116,7 +117,7 @@ export default function Equivalence({ onBack }: EquivalenceProps) {
       {/* Équivalence retenue */}
       {selected && (
         <>
-          <section className="animate-fade-up mt-6 rounded-3xl border border-gold bg-paper p-5 shadow-sm">
+          <section className="animate-fade-up mt-6 rounded-3xl border border-gold/50 bg-gradient-to-b from-paper to-cream p-6 shadow-[var(--shadow-card)]">
             <p className="text-[11px] font-semibold tracking-[0.3em] text-gold uppercase">
               {t.ui.equivalenceResult}
             </p>
@@ -153,7 +154,7 @@ export default function Equivalence({ onBack }: EquivalenceProps) {
 
             <button
               onClick={() => setDetails(selected.perfume)}
-              className="mt-4 w-full rounded-full border border-ink px-6 py-3 text-sm font-medium text-ink transition hover:border-gold hover:text-gold-dark active:scale-[0.98]"
+              className="lift mt-5 w-full rounded-full border border-ink/80 px-6 py-3 text-sm font-medium text-ink hover:border-gold hover:text-gold-dark"
             >
               {t.ui.detailsButton}
             </button>
@@ -164,11 +165,12 @@ export default function Equivalence({ onBack }: EquivalenceProps) {
             <section className="mt-8">
               <h3 className="font-serif text-2xl text-ink">{t.ui.equivalenceAlternatives}</h3>
               <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
-                {alternatives.map((p) => (
+                {alternatives.map((p, i) => (
                   <button
                     key={p.id}
                     onClick={() => setDetails(p)}
-                    className="rounded-2xl border border-line bg-paper px-4 py-3 text-left transition hover:border-gold"
+                    style={{ "--i": i } as React.CSSProperties}
+                    className="lift stagger animate-fade-up rounded-2xl border border-line bg-paper px-4 py-3.5 text-left shadow-[var(--shadow-card)] hover:border-gold"
                   >
                     <p className="font-medium text-ink">
                       <span className="text-gold-dark">{p.id}</span> — {p.name}

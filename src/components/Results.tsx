@@ -55,22 +55,33 @@ function MainCard({
   const intensityLabel = t.ui.intensityLabels[perfume.intensity - 1];
 
   return (
-    <article className="animate-fade-up rounded-3xl border border-line bg-paper p-5 shadow-sm">
+    <article
+      style={{ "--i": rank } as React.CSSProperties}
+      className="animate-fade-up stagger overflow-hidden rounded-3xl border border-line bg-paper shadow-[var(--shadow-card)]"
+    >
+      {/* Liseré doré : plus marqué pour le premier choix */}
+      <div
+        aria-hidden
+        className={`h-1 w-full ${
+          rank === 1 ? "bg-gradient-to-r from-gold-dark via-gold to-gold-light" : "bg-gold-light/70"
+        }`}
+      />
+      <div className="p-5">
       <div className="flex items-start gap-4">
-        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-ink font-serif text-xl text-gold-light">
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-ink font-serif text-xl text-gold-light shadow-[var(--shadow-card)]">
           {rank}
         </span>
         <div className="min-w-0 flex-1">
-          <h3 className="font-serif text-2xl leading-tight text-ink">
+          <h3 className="font-serif text-[1.65rem] leading-[1.1] text-balance text-ink">
             <span className="text-gold-dark">{perfume.id}</span> — {perfume.name}
           </h3>
-          <p className="mt-1 text-sm text-ink-soft">
+          <p className="mt-1.5 text-sm text-ink-soft">
             {perfume.family} · {intensityLabel}{" "}
             <IntensityDots level={perfume.intensity} label={intensityLabel} />
           </p>
         </div>
         {/* Prix */}
-        <span className="shrink-0 rounded-full bg-cream px-3 py-1 font-serif text-lg text-ink">
+        <span className="shrink-0 rounded-full border border-line bg-cream px-3 py-1 font-serif text-lg text-ink">
           {formatPrice(perfume)}
         </span>
       </div>
@@ -106,24 +117,25 @@ function MainCard({
       {/* Fiche détaillée */}
       <button
         onClick={onDetails}
-        className="mt-4 w-full rounded-full border border-line px-5 py-2.5 text-sm font-medium text-ink transition hover:border-gold hover:text-gold-dark active:scale-[0.98]"
+        className="lift mt-4 w-full rounded-full border border-line bg-cream/50 px-5 py-2.5 text-sm font-medium text-ink hover:border-gold hover:text-gold-dark"
       >
         {t.ui.detailsButton}
       </button>
 
       {/* Correspondance olfactive + lien boutique */}
-      <div className="mt-3 flex items-center justify-between gap-3 border-t border-line pt-2">
-        <p className="text-[11px] text-ink-soft/70">
+      <div className="mt-3 flex items-center justify-between gap-3 border-t border-line pt-2.5">
+        <p className="text-[11px] leading-snug text-ink-soft/70">
           {t.ui.correspondence} {perfume.match}
         </p>
         <a
           href={productUrl(perfume)}
           target="_blank"
           rel="noopener noreferrer"
-          className="shrink-0 text-[11px] font-medium text-gold-dark underline-offset-2 hover:underline"
+          className="shrink-0 text-[11px] font-medium text-gold-dark underline-offset-2 transition hover:underline"
         >
           {t.ui.viewOnShop} →
         </a>
+      </div>
       </div>
     </article>
   );
@@ -190,13 +202,15 @@ export default function Results({ answers, code, fromHistory, onRestart, onHome 
       </div>
 
       {/* Profil olfactif nommé */}
-      <section className="animate-fade-up mt-5 rounded-3xl border border-gold bg-paper p-5 text-center">
+      <section className="animate-fade-up mt-6 overflow-hidden rounded-3xl border border-gold/50 bg-gradient-to-b from-paper to-cream p-6 text-center shadow-[var(--shadow-card)]">
         <p className="text-[11px] font-semibold tracking-[0.3em] text-gold uppercase">
           {t.ui.profileKicker}
         </p>
-        <p className="mt-2 font-serif text-3xl leading-tight text-ink">{profile.name}</p>
-        <div className="mx-auto mt-3 h-px w-12 bg-gold-light" />
-        <p className="mt-3 text-sm leading-relaxed text-ink-soft">{profile.sentence}</p>
+        <p className="mt-3 font-serif text-[2.4rem] leading-[1.05] text-balance text-ink">
+          {profile.name}
+        </p>
+        <div className="rule-gold mx-auto mt-4 h-px w-20" />
+        <p className="mt-4 text-sm leading-relaxed text-pretty text-ink-soft">{profile.sentence}</p>
       </section>
 
       {/* Top 3 */}
@@ -209,17 +223,24 @@ export default function Results({ answers, code, fromHistory, onRestart, onHome 
       {/* Conseil d'essai olfactif */}
       <button
         onClick={() => setGuiding(true)}
-        className="mt-4 w-full rounded-2xl border border-dashed border-gold-light bg-paper px-5 py-3 text-sm font-medium text-gold-dark transition hover:border-gold"
+        className="lift mt-4 w-full rounded-2xl border border-dashed border-gold/50 bg-paper/60 px-5 py-3.5 text-sm font-medium text-gold-dark hover:border-gold hover:bg-paper"
       >
         ✻ {t.ui.testGuideButton}
       </button>
 
       {/* Le mot de Thibault (phrase vendeur) */}
-      <section className="animate-fade-up mt-8 rounded-3xl bg-ink p-5 text-cream">
-        <p className="text-[11px] font-semibold tracking-[0.3em] text-gold-light uppercase">
+      <section className="animate-fade-up relative mt-8 overflow-hidden rounded-3xl bg-ink p-6 text-cream shadow-[var(--shadow-lift)]">
+        {/* Halo doré discret en fond */}
+        <span
+          aria-hidden
+          className="pointer-events-none absolute -top-16 -right-10 h-40 w-40 rounded-full bg-gold/20 blur-3xl"
+        />
+        <p className="relative text-[11px] font-semibold tracking-[0.3em] text-gold-light uppercase">
           {t.ui.agentWord(AGENT.name)}
         </p>
-        <p className="mt-2 font-serif text-lg leading-relaxed italic">« {sellerPhrase} »</p>
+        <p className="relative mt-3 font-serif text-xl leading-relaxed text-pretty italic">
+          « {sellerPhrase} »
+        </p>
       </section>
 
       {/* Parfums annexes */}
@@ -227,11 +248,12 @@ export default function Results({ answers, code, fromHistory, onRestart, onHome 
         <section className="mt-8">
           <h3 className="font-serif text-2xl text-ink">{t.ui.extrasTitle}</h3>
           <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
-            {extras.map((p) => (
+            {extras.map((p, i) => (
               <button
                 key={p.id}
                 onClick={() => setDetails(p)}
-                className="rounded-2xl border border-line bg-paper px-4 py-3 text-left transition hover:border-gold"
+                style={{ "--i": i } as React.CSSProperties}
+                className="lift stagger animate-fade-up rounded-2xl border border-line bg-paper px-4 py-3.5 text-left shadow-[var(--shadow-card)] hover:border-gold"
               >
                 <p className="font-medium text-ink">
                   <span className="text-gold-dark">{p.id}</span> — {p.name}
@@ -248,22 +270,22 @@ export default function Results({ answers, code, fromHistory, onRestart, onHome 
       {/* Emporter sa sélection (QR code) — action mise en avant */}
       <button
         onClick={() => setSharing(true)}
-        className="mt-8 flex w-full items-center justify-center gap-2 rounded-full bg-gold px-6 py-4 text-base font-medium text-white shadow-lg transition hover:bg-gold-dark active:scale-[0.98]"
+        className="lift mt-8 flex w-full items-center justify-center gap-2.5 rounded-full bg-gradient-to-r from-gold to-gold-dark px-6 py-4 text-base font-medium text-white shadow-[var(--shadow-gold)]"
       >
         <span aria-hidden>▣</span> {t.ui.shareButton}
       </button>
 
       {/* Actions */}
-      <div className="mt-3 flex flex-col gap-3 sm:flex-row">
+      <div className="mt-3 flex flex-col gap-2.5 sm:flex-row">
         <button
           onClick={copySelection}
-          className="flex-1 rounded-full border border-ink px-6 py-3.5 text-base font-medium text-ink transition hover:border-gold hover:text-gold-dark active:scale-[0.98]"
+          className="lift flex-1 rounded-full border border-ink/80 px-6 py-3.5 text-base font-medium text-ink hover:border-gold hover:text-gold-dark"
         >
           {copied ? t.ui.copied : t.ui.copy}
         </button>
         <button
           onClick={onRestart}
-          className="flex-1 rounded-full bg-ink px-6 py-3.5 text-base font-medium text-cream transition hover:bg-gold-dark active:scale-[0.98]"
+          className="lift flex-1 rounded-full bg-ink px-6 py-3.5 text-base font-medium text-cream hover:bg-gold-dark"
         >
           {t.ui.newDiagnostic}
         </button>

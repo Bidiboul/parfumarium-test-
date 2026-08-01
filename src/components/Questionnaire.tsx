@@ -146,46 +146,78 @@ export default function Questionnaire({ onFinish, onQuit }: QuestionnaireProps) 
         <button
           onClick={goBack}
           aria-label="Retour"
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-line bg-paper text-lg text-ink transition hover:border-gold"
+          className="lift flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-line bg-paper text-lg text-ink hover:border-gold hover:text-gold-dark"
         >
           ←
         </button>
-        <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-gold-light">
-          <div className="progress-fill h-full rounded-full bg-gold" style={{ width: `${progress}%` }} />
+        <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-gold-light/70">
+          <div
+            className="progress-fill h-full rounded-full bg-gradient-to-r from-gold to-gold-dark"
+            style={{ width: `${progress}%` }}
+          />
         </div>
-        <span className="w-10 text-right text-xs font-medium text-ink-soft">
+        <span className="w-10 text-right font-serif text-sm text-ink-soft tabular-nums">
           {stepIndex + 1}/{steps.length}
         </span>
       </div>
 
-      {/* Question */}
-      <div key={step.key} className="animate-fade-up mt-8 flex-1">
-        <p className="text-[11px] font-semibold tracking-[0.3em] text-gold uppercase">
+      {/* Question — la clé force une réanimation à chaque étape */}
+      <div key={`${step.key}-${stepIndex}`} className="mt-9 flex-1">
+        <p
+          style={{ "--i": 0 } as React.CSSProperties}
+          className="animate-fade-up stagger text-[11px] font-semibold tracking-[0.3em] text-gold uppercase"
+        >
           {t.ui.question} {stepIndex + 1}
         </p>
-        <h2 className="mt-2 font-serif text-3xl leading-tight text-ink">{step.title}</h2>
+        <h2
+          style={{ "--i": 1 } as React.CSSProperties}
+          className="animate-fade-up stagger mt-2.5 font-serif text-[2rem] leading-[1.1] text-balance text-ink"
+        >
+          {step.title}
+        </h2>
+
         {/* Accompagnement de Thibault */}
         {t.agent.tips[step.key] && (
-          <div className="mt-4">
+          <div style={{ "--i": 2 } as React.CSSProperties} className="animate-fade-up stagger mt-5">
             <AgentBubble message={t.agent.tips[step.key]} compact />
           </div>
         )}
-        {step.multi && <p className="mt-2 text-sm text-ink-soft">{t.ui.multi}</p>}
+        {step.multi && (
+          <p
+            style={{ "--i": 3 } as React.CSSProperties}
+            className="animate-fade-up stagger mt-3 text-sm text-ink-soft"
+          >
+            {t.ui.multi}
+          </p>
+        )}
 
         <div className="mt-6 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
-          {step.options.map(({ value, label }) => {
+          {step.options.map(({ value, label }, i) => {
             const selected = step.multi && draft.avoid.includes(value);
             return (
               <button
                 key={value}
                 onClick={() => (step.multi ? toggleAvoid(value) : selectSingle(value))}
-                className={`rounded-2xl border px-5 py-4 text-left text-base font-medium transition active:scale-[0.98] ${
+                aria-pressed={step.multi ? selected : undefined}
+                style={{ "--i": i + 3 } as React.CSSProperties}
+                className={`lift stagger animate-fade-up flex items-center justify-between gap-3 rounded-2xl border px-5 py-4 text-left text-base font-medium ${
                   selected
-                    ? "border-gold bg-gold text-white shadow-md"
-                    : "border-line bg-paper text-ink hover:border-gold hover:shadow-sm"
+                    ? "border-gold bg-gold text-white shadow-[var(--shadow-gold)]"
+                    : "border-line bg-paper text-ink shadow-[var(--shadow-card)] hover:border-gold hover:text-gold-dark"
                 }`}
               >
-                {label}
+                <span className="text-pretty">{label}</span>
+                {/* Coche pour les questions à choix multiples */}
+                {step.multi && (
+                  <span
+                    aria-hidden
+                    className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border text-xs transition ${
+                      selected ? "border-white/70 bg-white/20 text-white" : "border-line text-transparent"
+                    }`}
+                  >
+                    ✓
+                  </span>
+                )}
               </button>
             );
           })}
@@ -195,7 +227,7 @@ export default function Questionnaire({ onFinish, onQuit }: QuestionnaireProps) 
         {isLast && (
           <button
             onClick={finish}
-            className="mt-8 w-full rounded-full bg-ink px-8 py-4 text-base font-medium tracking-wide text-cream shadow-lg transition hover:bg-gold-dark active:scale-[0.98]"
+            className="lift mt-8 w-full rounded-full bg-ink px-8 py-4 text-base font-medium tracking-wide text-cream shadow-[var(--shadow-lift)] hover:bg-gold-dark"
           >
             {t.ui.seeSelection}
           </button>

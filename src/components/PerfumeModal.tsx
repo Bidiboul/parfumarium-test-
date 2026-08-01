@@ -27,13 +27,13 @@ export default function PerfumeModal({ perfume, onClose }: PerfumeModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-ink/60 backdrop-blur-sm sm:items-center sm:px-5"
+      className="animate-backdrop fixed inset-0 z-50 flex items-end justify-center bg-ink/55 backdrop-blur-md sm:items-center sm:px-5"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
     >
       <div
-        className="animate-fade-up max-h-[88dvh] w-full max-w-md overflow-y-auto rounded-t-3xl border border-line bg-paper p-6 shadow-2xl sm:rounded-3xl"
+        className="animate-fade-up max-h-[88dvh] w-full max-w-md overflow-y-auto rounded-t-3xl border border-line bg-paper p-6 shadow-[var(--shadow-modal)] sm:rounded-3xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* En-tête */}
