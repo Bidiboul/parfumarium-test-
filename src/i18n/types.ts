@@ -56,6 +56,14 @@ export interface Translation {
     equivalenceAlternatives: string;
     equivalenceEmpty: string;
     equivalenceExamples: string;
+    /* Référence issue de la grande base */
+    referenceKicker: string;
+    accordsTitle: string;
+    closestMatch: string;
+    noMatch: string;
+    indexLoading: string;
+    indexReady: (count: string) => string;
+    indexUnavailable: string;
     /* Fiche parfum détaillée */
     detailsButton: string;
     notesTitle: string;

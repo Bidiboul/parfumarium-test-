@@ -12,10 +12,12 @@ export default defineConfig({
       registerType: "autoUpdate",
       includeAssets: ["apple-touch-icon.png"],
       workbox: {
-        // Les polices auto-hébergées doivent être précachées pour que la
-        // borne reste identique sans réseau (woff2 est hors des motifs
-        // pris en compte par défaut).
-        globPatterns: ["**/*.{js,css,html,ico,png,svg,webmanifest,woff2}"],
+        // Les polices auto-hébergées et l'index des références doivent
+        // être précachés pour que la borne reste complète sans réseau
+        // (woff2 et json sont hors des motifs pris en compte par défaut).
+        globPatterns: ["**/*.{js,css,html,ico,png,svg,webmanifest,woff2,json}"],
+        // L'index des références dépasse la limite par défaut de 2 Mio.
+        maximumFileSizeToCacheInBytes: 8 * 1024 * 1024,
       },
       manifest: {
         name: "Diagnostic Olfactif Parfumarium",

@@ -58,7 +58,10 @@ dans [`src/index.css`](src/index.css).
 
 ## Fonctionnalités
 
-- **Recherche par équivalence** : le client indique un parfum de marque qu'il connaît (« Black Opium », « Sauvage »…) et obtient immédiatement la référence Parfumarium correspondante, avec des alternatives dans le même esprit. Recherche tolérante aux accents, par nom, maison ou numéro (`src/utils/equivalence.ts`).
+- **Recherche par équivalence, sur 36 000 références** : le client tape le parfum qu'il connaît et obtient la référence Parfumarium correspondante, ses notes olfactives et deux à trois pistes complémentaires. Deux niveaux clairement distingués à l'écran :
+  1. les **correspondances officielles** du catalogue (champ `match` de `src/data/perfumes.ts`), qui font foi ;
+  2. à défaut, **la référence la plus proche calculée** à partir de l'index (`src/utils/fragranceIndex.ts`).
+  Voir la section « Base de références » plus bas.
 - **Profil olfactif nommé** : chaque diagnostic donne un profil (« Gourmand Sensuel », « Boisé Magnétique »…) affiché en tête du résultat, traduit dans les 5 langues (`src/utils/profile.ts`).
 - **Fiche parfum détaillée** : au clic sur un parfum, notes olfactives, jauge d'intensité, moments conseillés, style, prix et lien boutique (`src/components/PerfumeModal.tsx`).
 - **Guide d'essai olfactif** : les trois bons gestes et un minuteur de 2 minutes pour laisser le parfum se révéler (`src/components/TestGuide.tsx`).
@@ -121,6 +124,47 @@ src/
 ├── App.tsx                # Navigation + kiosque + lecture des liens partagés
 └── index.css              # Thème (blanc cassé / noir / doré)
 ```
+
+## Base de références (36 474 parfums)
+
+L'écran d'équivalence s'appuie sur `public/fragrance-index.json` : 36 474 parfums de
+2 536 marques, avec leurs accords dominants et — pour 12 321 d'entre eux — le détail des
+notes olfactives. Le fichier est chargé à la demande (1,9 Mo) puis précaché pour rester
+disponible hors-ligne.
+
+> ⚠️ **Droits d'usage à vérifier avant exploitation commerciale.** Les données de
+> l'index actuel proviennent d'un jeu public issu d'un moissonnage de Fragrantica,
+> sans licence explicite. Les noms de parfums et leurs notes sont des informations
+> factuelles, mais la compilation peut être protégée (droit *sui generis* des bases de
+> données en Europe) et les conditions d'utilisation du site source interdisent le
+> moissonnage. Avant une mise en production, remplacez cet index par une source dont
+> la boutique détient les droits — un export fournisseur ou une base sous licence.
+
+### Régénérer l'index
+
+L'index n'est pas figé : il se reconstruit à partir de n'importe quel classeur
+comportant les colonnes `brand`, `perfume`, `launch_year`, `main_accords`, `notes`
+(les deux dernières au format tableau JSON) :
+
+```bash
+node scripts/build-fragrance-index.mjs mon-fichier.xlsx
+```
+
+Le script traduit les notes et accords en français, les rattache à un vocabulaire
+canonique partagé avec le catalogue boutique, puis écrit `public/fragrance-index.json`.
+
+### Comment la correspondance est calculée
+
+Chaque parfum — externe ou boutique — est réduit à un profil pondéré de jetons olfactifs
+(`vanilla`, `oud`, `citrus`…) : voir `scripts/fragrance-vocabulary.mjs` pour le vocabulaire
+anglais et [`src/data/canonical.ts`](src/data/canonical.ts) pour le français. La proximité
+est mesurée par similarité cosinus, retenue après comparaison avec d'autres mesures (Dice,
+couverture) sur les correspondances officielles du catalogue.
+
+Mesurée sur 16 correspondances officielles connues, la correspondance calculée retrouve
+la bonne référence **en première position dans 50 % des cas et dans le top 3 dans 69 %**.
+C'est la raison pour laquelle les correspondances officielles restent prioritaires et
+signalées comme telles : le calcul ne sert que pour les références qui n'en ont pas.
 
 ## Avant la mise en boutique
 
