@@ -15,6 +15,7 @@
 
 import { perfumes, type Perfume } from "../data/perfumes";
 import { shopProfile } from "../data/canonical";
+import { HOUSES as SHOP_HOUSES } from "./equivalence";
 
 /** Fichier brut tel que produit par le script de construction. */
 interface RawIndex {
@@ -147,6 +148,78 @@ export function searchReferences(query: string, limit = 12): Reference[] {
 
   scored.sort((a, b) => b.score - a.score);
   return scored.slice(0, limit).map((s) => toReference(data, s.id));
+}
+
+/* ------------------------------------------------------------------ */
+/* Parcours par maison                                                 */
+/* ------------------------------------------------------------------ */
+
+export interface House {
+  /** Identifiant interne (position dans la table des marques). */
+  id: number;
+  name: string;
+  /** Nombre de références au catalogue. */
+  count: number;
+  /** Vrai si la boutique propose des équivalences de cette maison. */
+  featured: boolean;
+}
+
+/** Table maison → références, construite à la première demande. */
+let housesCache: House[] | null = null;
+
+/**
+ * Liste des maisons.
+ *
+ * Les maisons dont la boutique propose des équivalences apparaissent en
+ * premier : ce sont celles que les clients citent réellement. Sans ce
+ * classement, la liste s'ouvrirait sur les marques les plus prolifiques
+ * de l'index (catalogues de vente directe, marques régionales…), qui ne
+ * correspondent pas aux demandes en boutique.
+ */
+export function listHouses(query = "", limit = 60): House[] {
+  const data = index;
+  if (!data) return [];
+
+  if (!housesCache) {
+    const featured = new Set(SHOP_HOUSES.map((h) => normalize(h)).filter(Boolean));
+    const counts = new Array<number>(data.brands.length).fill(0);
+    for (const [brandId] of data.items) counts[brandId] += 1;
+
+    housesCache = data.brands
+      .map((name, id) => {
+        const key = normalize(name);
+        return {
+          id,
+          name,
+          count: counts[id],
+          // Tolère les variantes de dénomination (« Christian Dior » / « Dior »).
+          featured: [...featured].some((f) => key === f || key.includes(f) || f.includes(key)),
+        };
+      })
+      .filter((h) => h.count > 0)
+      .sort(
+        (a, b) =>
+          Number(b.featured) - Number(a.featured) ||
+          b.count - a.count ||
+          a.name.localeCompare(b.name)
+      );
+  }
+
+  const q = normalize(query);
+  const source = q.length > 0 ? housesCache.filter((h) => normalize(h.name).includes(q)) : housesCache;
+  return source.slice(0, limit);
+}
+
+/** Références d'une maison, par ordre alphabétique. */
+export function referencesOfHouse(houseId: number, limit = 300): Reference[] {
+  const data = index;
+  if (!data) return [];
+
+  const found: Reference[] = [];
+  for (let id = 0; id < data.items.length && found.length < limit; id++) {
+    if (data.items[id][0] === houseId) found.push(toReference(data, id));
+  }
+  return found.sort((a, b) => a.name.localeCompare(b.name, "fr"));
 }
 
 /* ------------------------------------------------------------------ */

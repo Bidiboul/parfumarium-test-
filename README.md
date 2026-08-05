@@ -62,6 +62,9 @@ dans [`src/index.css`](src/index.css).
   1. les **correspondances officielles** du catalogue (champ `match` de `src/data/perfumes.ts`), qui font foi ;
   2. à défaut, **la référence la plus proche calculée** à partir de l'index (`src/utils/fragranceIndex.ts`).
   Voir la section « Base de références » plus bas.
+- **Parcourir par maison** : pour le client qui se souvient de la marque mais pas du nom. Les maisons dont la boutique propose des équivalences (Guerlain, Dior, Chanel…) apparaissent en premier, signalées d'un point doré ; les autres suivent, avec un champ de recherche.
+- **Formats, tarifs et offre duo** : 30 ml à 39,90 €, 50 ml à 69,90 €, 100 ml à 89,90 €, et **10 € de réduction pour deux flacons du même format**. Le détail par format et le prix du duo figurent sur chaque fiche parfum ; les cartes affichent le prix d'appel. Tout est modifiable dans [`src/data/shop.ts`](src/data/shop.ts).
+- **L'histoire de la maison** : une carte sur l'accueil ouvre un écran de présentation (récit, repères, formats et tarifs), traduit dans les 5 langues. Texte modifiable dans [`src/data/story.ts`](src/data/story.ts).
 - **Profil olfactif nommé** : chaque diagnostic donne un profil (« Gourmand Sensuel », « Boisé Magnétique »…) affiché en tête du résultat, traduit dans les 5 langues (`src/utils/profile.ts`).
 - **Fiche parfum détaillée** : au clic sur un parfum, notes olfactives, jauge d'intensité, moments conseillés, style, prix et lien boutique (`src/components/PerfumeModal.tsx`).
 - **Guide d'essai olfactif** : les trois bons gestes et un minuteur de 2 minutes pour laisser le parfum se révéler (`src/components/TestGuide.tsx`).
@@ -88,7 +91,9 @@ src/
 │   ├── perfumes.ts        # Catalogue des parfums (modifiable facilement)
 │   ├── agent.ts           # Thibault : nom et phrases d'accompagnement
 │   ├── config.ts          # Code vendeur, durée du minuteur d'essai
-│   ├── shop.ts            # Config boutique : URL, devise, prix, liens produits
+│   ├── shop.ts            # Formats, tarifs, offre duo, liens produits
+│   ├── story.ts           # L'histoire de la boutique, dans les 5 langues
+│   ├── canonical.ts       # Vocabulaire olfactif du catalogue (rapprochements)
 │   └── questions.ts       # Questions, options et correspondances de tags
 ├── i18n/
 │   ├── index.tsx          # Contexte de langue (localStorage + <html lang>)
@@ -112,7 +117,8 @@ src/
 │   ├── Composing.tsx      # Instant de composition avant le résultat
 │   ├── Reveal.tsx         # Apparition au défilement
 │   ├── Results.tsx        # Profil, top 3, prix, QR, mot de Thibault
-│   ├── Equivalence.tsx    # « Quel parfum portez-vous ? »
+│   ├── Equivalence.tsx    # « Quel parfum portez-vous ? » + parcours par maison
+│   ├── Story.tsx          # L'histoire de la boutique
 │   ├── PerfumeModal.tsx   # Fiche parfum détaillée
 │   ├── TestGuide.tsx      # Guide d'essai olfactif + minuteur
 │   ├── ShareModal.tsx     # QR code « emporter ma sélection »
@@ -168,8 +174,13 @@ signalées comme telles : le calcul ne sert que pour les références qui n'en o
 
 ## Avant la mise en boutique
 
-Personnalisez [`src/data/config.ts`](src/data/config.ts) (**code d'accès vendeur**, par défaut `1234`)
-et [`src/data/shop.ts`](src/data/shop.ts) (prix et structure des liens vers parfumarium.fr).
+- [`src/data/config.ts`](src/data/config.ts) — **code d'accès vendeur** (`1234` par défaut).
+- [`src/data/shop.ts`](src/data/shop.ts) — formats, tarifs, montant de l'offre duo, structure
+  des liens vers parfumarium.fr.
+- [`src/data/story.ts`](src/data/story.ts) — **le texte de présentation est à relire**. Il a été
+  rédigé à partir des seuls éléments connus (parfumerie à Vaison-la-Romaine, fragrances
+  d'équivalence numérotées, diagnostic offert) : aucune date, aucun nom de fondateur ni
+  chiffre d'activité n'a été inventé. Ajoutez-les vous-même si vous souhaitez les mettre en avant.
 
 ## Modifier le catalogue
 

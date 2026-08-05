@@ -15,6 +15,7 @@ import Questionnaire from "./components/Questionnaire";
 import Composing from "./components/Composing";
 import Results from "./components/Results";
 import Equivalence from "./components/Equivalence";
+import Story from "./components/Story";
 import QuickCode from "./components/QuickCode";
 import Search from "./components/Search";
 import History from "./components/History";
@@ -32,6 +33,7 @@ type Screen =
   | "composing"
   | "results"
   | "equivalence"
+  | "story"
   | "code"
   | "search"
   | "history"
@@ -137,6 +139,7 @@ function AppContent() {
         <Home
           onStart={() => setScreen("quiz")}
           onEquivalence={() => setScreen("equivalence")}
+          onStory={() => setScreen("story")}
           onQuickCode={() => openSellerScreen("code")}
           onSearch={() => openSellerScreen("search")}
           onHistory={() => openSellerScreen("history")}
@@ -145,6 +148,8 @@ function AppContent() {
       )}
 
       {screen === "equivalence" && <Equivalence onBack={() => setScreen("home")} />}
+
+      {screen === "story" && <Story onBack={() => setScreen("home")} />}
 
       {screen === "quiz" && (
         <Questionnaire

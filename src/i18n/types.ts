@@ -46,6 +46,20 @@ export interface Translation {
     viewOnShop: string;
     priceFrom: string;
     outOfStock: string;
+    /* Formats et offre duo */
+    formatsTitle: string;
+    duoTitle: string;
+    duoDetail: (discount: string) => string;
+    duoPer: (price: string) => string;
+    /* Parcours par maison */
+    housesButton: string;
+    housesTitle: string;
+    housesSearch: string;
+    housesCount: (n: number) => string;
+    housesBack: string;
+    /* Histoire de la maison */
+    storyLink: string;
+    storyMore: string;
     /* Recherche par équivalence */
     equivalenceButton: string;
     equivalenceKicker: string;

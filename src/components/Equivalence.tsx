@@ -17,7 +17,7 @@ import AgentBubble from "./AgentBubble";
 import PerfumeModal from "./PerfumeModal";
 import Reveal from "./Reveal";
 import { useI18n, getDescription } from "../i18n";
-import { formatPrice } from "../data/shop";
+import { entryFormat, money } from "../data/shop";
 import {
   searchEquivalences,
   findAlternatives,
@@ -28,8 +28,11 @@ import {
   searchReferences,
   matchReference,
   referenceCount,
+  listHouses,
+  referencesOfHouse,
   type Reference,
   type ReferenceMatch,
+  type House,
 } from "../utils/fragranceIndex";
 import type { Perfume } from "../data/perfumes";
 
@@ -70,6 +73,9 @@ export default function Equivalence({ onBack }: EquivalenceProps) {
   const [details, setDetails] = useState<Perfume | null>(null);
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
+  /** Parcours par maison : null = navigation par recherche. */
+  const [houseQuery, setHouseQuery] = useState<string | null>(null);
+  const [house, setHouse] = useState<House | null>(null);
 
   // L'index complet est volumineux : il n'est chargé qu'en arrivant sur
   // cet écran, une seule fois, et reste ensuite disponible hors-ligne.
@@ -113,6 +119,23 @@ export default function Equivalence({ onBack }: EquivalenceProps) {
     setSelected(null);
   };
 
+  /** Maisons affichées et parfums de la maison ouverte. */
+  const houses = useMemo(
+    () => (houseQuery !== null && ready ? listHouses(houseQuery) : []),
+    [houseQuery, ready]
+  );
+  const houseReferences = useMemo(
+    () => (house ? referencesOfHouse(house.id) : []),
+    [house]
+  );
+
+  /** Quitte le parcours par maison et revient à la recherche libre. */
+  const closeHouses = () => {
+    setHouseQuery(null);
+    setHouse(null);
+    setSelected(null);
+  };
+
   /* -------------------------------------------------------------- */
   /* Bloc de résultat                                                */
   /* -------------------------------------------------------------- */
@@ -142,8 +165,11 @@ export default function Equivalence({ onBack }: EquivalenceProps) {
               <h3 className="font-serif text-3xl leading-tight text-ink">
                 <span className="text-gold-dark">{perfume.id}</span> — {perfume.name}
               </h3>
-              <span className="shrink-0 rounded-full border border-line bg-cream px-3 py-1 font-serif text-lg text-ink">
-                {formatPrice(perfume)}
+              <span className="shrink-0 rounded-full border border-line bg-cream px-3 py-1 text-right">
+                <span className="block text-[9px] leading-none text-ink-soft">{t.ui.priceFrom}</span>
+                <span className="block font-serif text-lg leading-tight text-ink">
+                  {money(entryFormat().price, lang)}
+                </span>
               </span>
             </div>
             <p className="mt-1 text-sm text-ink-soft">
@@ -235,8 +261,11 @@ export default function Equivalence({ onBack }: EquivalenceProps) {
                 <h3 className="font-serif text-3xl leading-tight text-ink">
                   <span className="text-gold-dark">{match.best.id}</span> — {match.best.name}
                 </h3>
-                <span className="shrink-0 rounded-full border border-line bg-cream px-3 py-1 font-serif text-lg text-ink">
-                  {formatPrice(match.best)}
+                <span className="shrink-0 rounded-full border border-line bg-cream px-3 py-1 text-right">
+                  <span className="block text-[9px] leading-none text-ink-soft">{t.ui.priceFrom}</span>
+                  <span className="block font-serif text-lg leading-tight text-ink">
+                    {money(entryFormat().price, lang)}
+                  </span>
                 </span>
               </div>
               <p className="mt-1 text-sm text-ink-soft">
@@ -283,10 +312,99 @@ export default function Equivalence({ onBack }: EquivalenceProps) {
     ) : null;
 
   /* -------------------------------------------------------------- */
+  /* Parcours par maison                                             */
+  /* -------------------------------------------------------------- */
+  if (houseQuery !== null && !selected) {
+    return (
+      <div className="animate-fade-up mx-auto w-full max-w-xl px-5 pb-14 pt-6">
+        <button
+          onClick={house ? () => setHouse(null) : closeHouses}
+          aria-label={t.ui.housesBack}
+          className="lift flex h-11 w-11 items-center justify-center rounded-full border border-line bg-paper text-lg hover:border-gold"
+        >
+          ←
+        </button>
+
+        <p className="mt-6 text-[11px] font-semibold tracking-[0.3em] text-gold uppercase">
+          {t.ui.equivalenceKicker}
+        </p>
+        <h2 className="mt-2 font-serif text-3xl leading-tight text-ink">
+          {house ? house.name : t.ui.housesTitle}
+        </h2>
+
+        {/* Choix de la maison */}
+        {!house && (
+          <>
+            <input
+              value={houseQuery}
+              onChange={(e) => setHouseQuery(e.target.value)}
+              placeholder={t.ui.housesSearch}
+              aria-label={t.ui.housesSearch}
+              autoFocus
+              className="mt-5 w-full rounded-2xl border border-line bg-paper px-5 py-4 text-lg text-ink shadow-[var(--shadow-card)] outline-none transition focus:border-gold"
+            />
+            <div className="mt-4 space-y-2">
+              {houses.map((h, i) => (
+                <Reveal key={h.id} index={Math.min(i, 5)}>
+                  <button
+                    onClick={() => setHouse(h)}
+                    className="lift flex w-full items-center justify-between gap-3 rounded-2xl border border-line bg-paper px-4 py-3.5 text-left shadow-[var(--shadow-card)] hover:border-gold"
+                  >
+                    <span className="flex min-w-0 items-center gap-2">
+                      {/* Point doré : maison dont nous avons des équivalences */}
+                      {h.featured && (
+                        <span aria-hidden className="h-1.5 w-1.5 shrink-0 rounded-full bg-gold" />
+                      )}
+                      <span className="truncate font-medium text-ink">{h.name}</span>
+                    </span>
+                    <span className="shrink-0 text-xs text-ink-soft">
+                      {t.ui.housesCount(h.count)}
+                    </span>
+                  </button>
+                </Reveal>
+              ))}
+              {houses.length === 0 && (
+                <p className="rounded-2xl border border-dashed border-line px-4 py-8 text-center text-sm text-ink-soft">
+                  {ready ? t.ui.equivalenceEmpty : t.ui.indexLoading}
+                </p>
+              )}
+            </div>
+          </>
+        )}
+
+        {/* Parfums de la maison choisie */}
+        {house && (
+          <div className="mt-5 space-y-2">
+            <p className="text-xs text-ink-soft">{t.ui.housesCount(house.count)}</p>
+            {houseReferences.map((reference, i) => (
+              <Reveal key={reference.id} index={Math.min(i, 5)}>
+                <button
+                  onClick={() => setSelected({ kind: "indexed", reference })}
+                  className="lift flex w-full items-center justify-between gap-3 rounded-2xl border border-line bg-paper px-4 py-3.5 text-left shadow-[var(--shadow-card)] hover:border-gold"
+                >
+                  <span className="min-w-0">
+                    <span className="block font-medium text-ink">{reference.name}</span>
+                    {reference.year > 0 && (
+                      <span className="block text-xs text-ink-soft">{reference.year}</span>
+                    )}
+                  </span>
+                  <span aria-hidden className="shrink-0 text-lg text-ink-soft/60">
+                    →
+                  </span>
+                </button>
+              </Reveal>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  /* -------------------------------------------------------------- */
   return (
     <div className="animate-fade-up mx-auto w-full max-w-xl px-5 pb-14 pt-6">
       <button
-        onClick={onBack}
+        onClick={houseQuery !== null ? closeHouses : onBack}
         aria-label={t.ui.backHome}
         className="lift flex h-11 w-11 items-center justify-center rounded-full border border-line bg-paper text-lg hover:border-gold"
       >
@@ -321,6 +439,19 @@ export default function Equivalence({ onBack }: EquivalenceProps) {
               ? t.ui.indexReady(referenceCount().toLocaleString("fr-FR"))
               : t.ui.indexLoading}
         </p>
+      )}
+
+      {/* Le client se souvient de la marque mais pas du nom */}
+      {query.trim().length < 2 && ready && (
+        <button
+          onClick={() => setHouseQuery("")}
+          className="lift mt-4 flex w-full items-center justify-between gap-3 rounded-2xl border border-line bg-paper px-5 py-3.5 text-left shadow-[var(--shadow-card)] hover:border-gold"
+        >
+          <span className="font-medium text-ink">{t.ui.housesButton}</span>
+          <span aria-hidden className="text-lg text-gold">
+            →
+          </span>
+        </button>
       )}
 
       {/* Suggestions de départ */}

@@ -5,11 +5,13 @@
  */
 
 import { AGENT } from "../data/agent";
+import { STORY } from "../data/story";
 import { useI18n, LANGUAGES } from "../i18n";
 
 interface HomeProps {
   onStart: () => void;
   onEquivalence: () => void;
+  onStory: () => void;
   onQuickCode: () => void;
   onSearch: () => void;
   onHistory: () => void;
@@ -19,12 +21,14 @@ interface HomeProps {
 export default function Home({
   onStart,
   onEquivalence,
+  onStory,
   onQuickCode,
   onSearch,
   onHistory,
   onStats,
 }: HomeProps) {
   const { lang, setLang, t } = useI18n();
+  const story = STORY[lang];
 
   return (
     <div className="flex min-h-dvh flex-col items-center px-6 pb-6 text-center">
@@ -131,6 +135,24 @@ export default function Home({
         >
           {t.ui.subtext}
         </p>
+
+        {/* L'histoire de la maison — invitation discrète à en savoir plus */}
+        <button
+          onClick={onStory}
+          style={{ "--i": 8 } as React.CSSProperties}
+          className="lift animate-fade-up stagger mt-9 w-full max-w-sm rounded-3xl border border-line bg-paper/70 px-6 py-5 text-center backdrop-blur hover:border-gold"
+        >
+          <span className="block text-[10px] font-semibold tracking-[0.3em] text-gold uppercase">
+            {t.ui.storyLink}
+          </span>
+          <span className="mt-2 block font-serif text-lg leading-snug text-balance text-ink">
+            {story.teaser}
+          </span>
+          <span className="mt-2.5 flex items-center justify-center gap-1.5 text-xs text-gold-dark">
+            {t.ui.storyMore}
+            <span aria-hidden>→</span>
+          </span>
+        </button>
       </div>
 
       {/* Espace vendeur, volontairement discret */}

@@ -16,7 +16,7 @@ import TestGuide from "./TestGuide";
 import { AGENT } from "../data/agent";
 import { useI18n, getDescription } from "../i18n";
 import { perfumes, type Perfume } from "../data/perfumes";
-import { formatPrice, productUrl } from "../data/shop";
+import { entryFormat, money, productUrl } from "../data/shop";
 import { recommendPerfumes, type Answers, type PerfumeWithScore } from "../utils/recommendation";
 import { buildProfile } from "../utils/profile";
 import { saveToHistory } from "../utils/history";
@@ -82,9 +82,12 @@ function MainCard({
             <IntensityDots level={perfume.intensity} label={intensityLabel} />
           </p>
         </div>
-        {/* Prix */}
-        <span className="shrink-0 rounded-full border border-line bg-cream px-3 py-1 font-serif text-lg text-ink">
-          {formatPrice(perfume)}
+        {/* Prix d'appel : le détail des formats est dans la fiche */}
+        <span className="shrink-0 rounded-full border border-line bg-cream px-3 py-1 text-right">
+          <span className="block text-[9px] leading-none text-ink-soft">{t.ui.priceFrom}</span>
+          <span className="block font-serif text-lg leading-tight text-ink">
+            {money(entryFormat().price, lang)}
+          </span>
         </span>
       </div>
 

@@ -6,7 +6,7 @@
 
 import { useEffect } from "react";
 import { useI18n, getDescription } from "../i18n";
-import { formatPrice, productUrl } from "../data/shop";
+import { FORMATS, DUO_DISCOUNT, duoPrice, entryFormat, money, productUrl } from "../data/shop";
 import type { Perfume } from "../data/perfumes";
 
 interface PerfumeModalProps {
@@ -46,8 +46,11 @@ export default function PerfumeModal({ perfume, onClose }: PerfumeModalProps) {
             </h3>
             <p className="mt-1 text-sm text-ink-soft">{perfume.family}</p>
           </div>
-          <span className="shrink-0 rounded-full bg-cream px-3 py-1.5 font-serif text-xl text-ink">
-            {formatPrice(perfume)}
+          <span className="shrink-0 rounded-full border border-line bg-cream px-3 py-1.5 text-right">
+            <span className="block text-[10px] leading-none text-ink-soft">{t.ui.priceFrom}</span>
+            <span className="block font-serif text-xl leading-tight text-ink">
+              {money(entryFormat().price, lang)}
+            </span>
           </span>
         </div>
 
@@ -115,6 +118,30 @@ export default function PerfumeModal({ perfume, onClose }: PerfumeModalProps) {
               </span>
             ))}
           </div>
+        </section>
+
+        {/* Formats, tarifs et offre duo */}
+        <section className="mt-6 rounded-2xl border border-line bg-cream/60 p-4">
+          <h4 className="text-[11px] font-semibold tracking-[0.2em] text-gold uppercase">
+            {t.ui.formatsTitle}
+          </h4>
+          <ul className="mt-2.5 divide-y divide-line/70">
+            {FORMATS.map((format) => (
+              <li key={format.ml} className="flex items-baseline justify-between gap-3 py-2">
+                <span className="text-sm font-medium text-ink">{format.ml} ml</span>
+                <span className="text-right">
+                  <span className="font-serif text-lg text-ink">{money(format.price, lang)}</span>
+                  <span className="ml-2 text-[11px] text-ink-soft">
+                    {t.ui.duoPer(money(duoPrice(format), lang))}
+                  </span>
+                </span>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-3 text-xs leading-relaxed text-ink-soft">
+            <span className="font-medium text-gold-dark">{t.ui.duoTitle}</span>{" "}
+            {t.ui.duoDetail(money(DUO_DISCOUNT, lang))}
+          </p>
         </section>
 
         {/* Correspondance olfactive */}
