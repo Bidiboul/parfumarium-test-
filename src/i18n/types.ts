@@ -73,6 +73,8 @@ export interface Translation {
     feedbackThanks: string;
     /* Profil olfactif */
     profileKicker: string;
+    /* Instant de composition, entre la dernière question et le résultat */
+    composing: string;
   };
   /** Profil olfactif nommé (ex. « Gourmand Sensuel »). */
   profile: {

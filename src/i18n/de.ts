@@ -58,6 +58,7 @@ export const de: Translation = {
     feedbackQuestion: "Sagt Ihnen diese Auswahl zu?",
     feedbackThanks: "Danke, notiert!",
     profileKicker: "Ihr Duftprofil",
+    composing: "Ich stelle Ihre Auswahl zusammen…",
   },
   profile: {
     nouns: {

@@ -189,6 +189,49 @@ h3 {
   }
 }
 
+/* Reflet doré qui balaie un texte (nom du profil olfactif). */
+@keyframes shimmer-text {
+  from {
+    background-position: 200% center;
+  }
+  to {
+    background-position: -200% center;
+  }
+}
+
+/* Anneau qui tourne pendant que Thibault « compose » la sélection. */
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Pulsation des points d'attente. */
+@keyframes dot-pulse {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.8);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Entrée d'un écran (utilisé en repli si les View Transitions
+   ne sont pas disponibles). */
+@keyframes screen-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 8px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
 .animate-fade-up {
   animation: fade-up 0.55s var(--ease-out-soft) both;
 }
@@ -203,6 +246,36 @@ h3 {
 
 .animate-breathe {
   animation: breathe 4.5s ease-in-out infinite;
+}
+
+.animate-spin-slow {
+  animation: spin-slow 2.4s linear infinite;
+}
+
+.animate-screen-in {
+  animation: screen-in 0.4s var(--ease-out-soft) both;
+}
+
+/* Points d'attente : trois points qui respirent à tour de rôle. */
+.dot-pulse {
+  animation: dot-pulse 1.4s ease-in-out infinite;
+}
+
+/* Texte doré traversé par un reflet — réservé aux moments forts. */
+.text-shimmer {
+  background: linear-gradient(
+    100deg,
+    var(--color-ink) 0%,
+    var(--color-ink) 38%,
+    var(--color-gold) 50%,
+    var(--color-ink) 62%,
+    var(--color-ink) 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer-text 3.6s ease-in-out 0.4s infinite;
 }
 
 /* Apparition en cascade : `style={{ '--i': index }}` sur chaque enfant.
@@ -266,6 +339,46 @@ h3 {
   );
 }
 
+/* Apparition au défilement : l'élément se révèle quand il entre dans
+   l'écran (voir le composant <Reveal>). Le contenu long ne « joue » donc
+   plus ses animations hors de vue. */
+.reveal {
+  opacity: 0;
+  transform: translate3d(0, 22px, 0);
+  transition:
+    opacity 0.65s var(--ease-out-soft),
+    transform 0.65s var(--ease-out-soft);
+  transition-delay: min(calc(var(--i, 0) * 70ms), 350ms);
+  will-change: opacity, transform;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+/* Transitions d'écran natives (View Transitions API).
+   Le navigateur assure un fondu croisé accéléré par le GPU entre
+   deux écrans ; le repli est l'animation .animate-screen-in. */
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root) {
+  animation: 0.22s ease-out both fade-out-screen;
+}
+
+::view-transition-new(root) {
+  animation: 0.34s var(--ease-out-soft) both screen-in;
+}
+
+@keyframes fade-out-screen {
+  to {
+    opacity: 0;
+    transform: translate3d(0, -6px, 0);
+  }
+}
+
 /* Barre de défilement discrète, assortie au thème. */
 * {
   scrollbar-width: thin;
@@ -291,5 +404,16 @@ h3 {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+
+  /* Le contenu révélé au défilement doit rester visible. */
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none !important;
   }
 }

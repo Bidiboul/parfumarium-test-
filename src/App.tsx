@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import { I18nProvider, useI18n } from "./i18n";
 import Home from "./components/Home";
 import Questionnaire from "./components/Questionnaire";
+import Composing from "./components/Composing";
 import Results from "./components/Results";
 import Equivalence from "./components/Equivalence";
 import QuickCode from "./components/QuickCode";
@@ -20,6 +21,7 @@ import History from "./components/History";
 import Stats from "./components/Stats";
 import SellerGate from "./components/SellerGate";
 import { useIdleTimer } from "./hooks/useIdleTimer";
+import { useScreenTransition } from "./hooks/useScreenTransition";
 import { readSharedDiagnostic, clearShareParam } from "./utils/share";
 import type { Answers } from "./utils/recommendation";
 import type { HistoryEntry } from "./utils/history";
@@ -27,6 +29,7 @@ import type { HistoryEntry } from "./utils/history";
 type Screen =
   | "home"
   | "quiz"
+  | "composing"
   | "results"
   | "equivalence"
   | "code"
@@ -45,22 +48,29 @@ const DEFAULT_LANG = "fr" as const;
 
 function AppContent() {
   const { setLang } = useI18n();
-  const [screen, setScreen] = useState<Screen>("home");
+  const [screen, setScreenState] = useState<Screen>("home");
   const [result, setResult] = useState<ResultState | null>(null);
   /** Espace vendeur déverrouillé (jusqu'au prochain retour kiosque). */
   const [sellerUnlocked, setSellerUnlocked] = useState(false);
   /** Écran vendeur demandé, en attente de saisie du code. */
   const [pendingScreen, setPendingScreen] = useState<Screen | null>(null);
 
+  // Chaque changement d'écran passe par une transition de vue : le
+  // navigateur assure un fondu croisé fluide entre les deux états.
+  const withTransition = useScreenTransition();
+  const setScreen = (target: Screen) => withTransition(() => setScreenState(target));
+
   /** Ouvre un écran vendeur, en demandant le code si nécessaire. */
   const openSellerScreen = (target: Screen) => {
     if (sellerUnlocked) return setScreen(target);
-    setPendingScreen(target);
+    withTransition(() => setPendingScreen(target));
   };
 
   const showResults = (state: ResultState) => {
-    setResult(state);
-    setScreen("results");
+    withTransition(() => {
+      setResult(state);
+      setScreenState("results");
+    });
   };
 
   const openHistoryEntry = (entry: HistoryEntry) =>
@@ -95,12 +105,14 @@ function AppContent() {
     return (
       <div className="min-h-dvh bg-cream">
         <SellerGate
-          onUnlock={() => {
-            setSellerUnlocked(true);
-            setScreen(pendingScreen);
-            setPendingScreen(null);
-          }}
-          onBack={() => setPendingScreen(null)}
+          onUnlock={() =>
+            withTransition(() => {
+              setSellerUnlocked(true);
+              setScreenState(pendingScreen);
+              setPendingScreen(null);
+            })
+          }
+          onBack={() => withTransition(() => setPendingScreen(null))}
         />
       </div>
     );
@@ -108,8 +120,9 @@ function AppContent() {
 
   return (
     <div className="min-h-dvh bg-cream">
-      {/* En-tête discret sur tous les écrans sauf l'accueil */}
-      {screen !== "home" && (
+      {/* En-tête discret : masqué sur l'accueil et pendant la composition,
+          pour ne pas casser la mise en scène. */}
+      {screen !== "home" && screen !== "composing" && (
         <header className="mx-auto flex w-full max-w-xl items-center justify-center px-5 pt-5">
           <button
             onClick={returnToHome}
@@ -135,10 +148,19 @@ function AppContent() {
 
       {screen === "quiz" && (
         <Questionnaire
-          onFinish={(answers) => showResults({ answers })}
+          // Le diagnostic passe par l'instant de composition : la
+          // révélation des trois parfums n'en est que plus attendue.
+          onFinish={(answers) =>
+            withTransition(() => {
+              setResult({ answers });
+              setScreenState("composing");
+            })
+          }
           onQuit={() => setScreen("home")}
         />
       )}
+
+      {screen === "composing" && <Composing onDone={() => setScreen("results")} />}
 
       {screen === "results" && result && (
         <Results

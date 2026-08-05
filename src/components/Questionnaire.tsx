@@ -36,6 +36,21 @@ interface Step {
 /** Réponses en cours de saisie. */
 type Draft = Partial<Omit<Answers, "avoid">> & { avoid: string[] };
 
+/** Durée de la confirmation visuelle d'un choix, en millisecondes. */
+const CONFIRM_MS = 190;
+
+/**
+ * Bref retour haptique au toucher, quand l'appareil le permet
+ * (tablettes Android). Sans effet ailleurs.
+ */
+const tap = () => {
+  try {
+    navigator.vibrate?.(8);
+  } catch {
+    // Vibration indisponible : sans conséquence.
+  }
+};
+
 /** Options d'un groupe, avec libellés traduits (repli : libellé français). */
 const toOptions = (record: Record<string, { label: string }>, t: Translation) =>
   Object.entries(record).map(([value, { label }]) => ({
@@ -78,6 +93,8 @@ export default function Questionnaire({ onFinish, onQuit }: QuestionnaireProps) 
   const { t } = useI18n();
   const [draft, setDraft] = useState<Draft>({ avoid: [] });
   const [stepIndex, setStepIndex] = useState(0);
+  /** Option choisie en cours de confirmation visuelle. */
+  const [picked, setPicked] = useState<string | null>(null);
 
   const steps = useMemo(() => buildSteps(draft, t), [draft, t]);
   const step = steps[stepIndex];
@@ -97,19 +114,31 @@ export default function Questionnaire({ onFinish, onQuit }: QuestionnaireProps) 
     []
   );
 
-  /** Sélection d'une réponse simple : enregistre puis passe à la suite. */
+  /**
+   * Sélection d'une réponse simple. Le choix est confirmé visuellement
+   * un court instant avant de passer à la question suivante : le geste
+   * est ainsi acquitté, au lieu d'un basculement sec.
+   */
   const selectSingle = (value: string) => {
-    setDraft((d) => {
-      const next = { ...d, [step.key]: value };
-      // Changer de famille invalide la sous-préférence précédente.
-      if (step.key === "mainFamily") delete next.subPreference;
-      return next;
-    });
-    setStepIndex((i) => i + 1);
+    if (picked) return; // évite un double-appui pendant la confirmation
+    setPicked(value);
+    tap();
+
+    setTimeout(() => {
+      setDraft((d) => {
+        const next = { ...d, [step.key]: value };
+        // Changer de famille invalide la sous-préférence précédente.
+        if (step.key === "mainFamily") delete next.subPreference;
+        return next;
+      });
+      setStepIndex((i) => i + 1);
+      setPicked(null);
+    }, CONFIRM_MS);
   };
 
   /** Sélection multiple (question « à éviter »). */
   const toggleAvoid = (value: string) => {
+    tap();
     setDraft((d) => {
       if (value === "rien") return { ...d, avoid: d.avoid.includes("rien") ? [] : ["rien"] };
       const without = d.avoid.filter((v) => v !== "rien");
@@ -150,11 +179,22 @@ export default function Questionnaire({ onFinish, onQuit }: QuestionnaireProps) 
         >
           ←
         </button>
-        <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-gold-light/70">
+        <div className="relative h-1.5 flex-1 rounded-full bg-gold-light/70">
           <div
             className="progress-fill h-full rounded-full bg-gradient-to-r from-gold to-gold-dark"
             style={{ width: `${progress}%` }}
           />
+          {/* Repères d'étape : le chemin parcouru se lit d'un coup d'œil. */}
+          <div aria-hidden className="absolute inset-0 flex items-center justify-between px-px">
+            {steps.map((s, i) => (
+              <span
+                key={s.key}
+                className={`h-1.5 w-1.5 rounded-full transition-colors duration-500 ${
+                  i <= stepIndex ? "bg-paper/80" : "bg-transparent"
+                }`}
+              />
+            ))}
+          </div>
         </div>
         <span className="w-10 text-right font-serif text-sm text-ink-soft tabular-nums">
           {stepIndex + 1}/{steps.length}
@@ -193,7 +233,11 @@ export default function Questionnaire({ onFinish, onQuit }: QuestionnaireProps) 
 
         <div className="mt-6 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
           {step.options.map(({ value, label }, i) => {
+            // « active » couvre les deux cas : case cochée (choix
+            // multiple) et confirmation brève d'un choix simple.
             const selected = step.multi && draft.avoid.includes(value);
+            const confirming = picked === value;
+            const active = selected || confirming;
             return (
               <button
                 key={value}
@@ -201,18 +245,18 @@ export default function Questionnaire({ onFinish, onQuit }: QuestionnaireProps) 
                 aria-pressed={step.multi ? selected : undefined}
                 style={{ "--i": i + 3 } as React.CSSProperties}
                 className={`lift stagger animate-fade-up flex items-center justify-between gap-3 rounded-2xl border px-5 py-4 text-left text-base font-medium ${
-                  selected
+                  active
                     ? "border-gold bg-gold text-white shadow-[var(--shadow-gold)]"
                     : "border-line bg-paper text-ink shadow-[var(--shadow-card)] hover:border-gold hover:text-gold-dark"
-                }`}
+                } ${confirming ? "scale-[1.015]" : ""}`}
               >
                 <span className="text-pretty">{label}</span>
                 {/* Coche pour les questions à choix multiples */}
-                {step.multi && (
+                {(step.multi || confirming) && (
                   <span
                     aria-hidden
                     className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border text-xs transition ${
-                      selected ? "border-white/70 bg-white/20 text-white" : "border-line text-transparent"
+                      active ? "border-white/70 bg-white/20 text-white" : "border-line text-transparent"
                     }`}
                   >
                     ✓

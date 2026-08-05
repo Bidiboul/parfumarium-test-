@@ -9,6 +9,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import AgentBubble from "./AgentBubble";
+import Reveal from "./Reveal";
 import ShareModal from "./ShareModal";
 import PerfumeModal from "./PerfumeModal";
 import TestGuide from "./TestGuide";
@@ -55,9 +56,10 @@ function MainCard({
   const intensityLabel = t.ui.intensityLabels[perfume.intensity - 1];
 
   return (
-    <article
-      style={{ "--i": rank } as React.CSSProperties}
-      className="animate-fade-up stagger overflow-hidden rounded-3xl border border-line bg-paper shadow-[var(--shadow-card)]"
+    <Reveal
+      as="article"
+      index={rank}
+      className="overflow-hidden rounded-3xl border border-line bg-paper shadow-[var(--shadow-card)]"
     >
       {/* Liseré doré : plus marqué pour le premier choix */}
       <div
@@ -137,7 +139,7 @@ function MainCard({
         </a>
       </div>
       </div>
-    </article>
+    </Reveal>
   );
 }
 
@@ -206,7 +208,7 @@ export default function Results({ answers, code, fromHistory, onRestart, onHome 
         <p className="text-[11px] font-semibold tracking-[0.3em] text-gold uppercase">
           {t.ui.profileKicker}
         </p>
-        <p className="mt-3 font-serif text-[2.4rem] leading-[1.05] text-balance text-ink">
+        <p className="text-shimmer mt-3 font-serif text-[2.4rem] leading-[1.05] text-balance">
           {profile.name}
         </p>
         <div className="rule-gold mx-auto mt-4 h-px w-20" />
@@ -229,7 +231,7 @@ export default function Results({ answers, code, fromHistory, onRestart, onHome 
       </button>
 
       {/* Le mot de Thibault (phrase vendeur) */}
-      <section className="animate-fade-up relative mt-8 overflow-hidden rounded-3xl bg-ink p-6 text-cream shadow-[var(--shadow-lift)]">
+      <Reveal as="section" className="relative mt-8 overflow-hidden rounded-3xl bg-ink p-6 text-cream shadow-[var(--shadow-lift)]">
         {/* Halo doré discret en fond */}
         <span
           aria-hidden
@@ -241,7 +243,7 @@ export default function Results({ answers, code, fromHistory, onRestart, onHome 
         <p className="relative mt-3 font-serif text-xl leading-relaxed text-pretty italic">
           « {sellerPhrase} »
         </p>
-      </section>
+      </Reveal>
 
       {/* Parfums annexes */}
       {extras.length > 0 && (
@@ -249,19 +251,19 @@ export default function Results({ answers, code, fromHistory, onRestart, onHome 
           <h3 className="font-serif text-2xl text-ink">{t.ui.extrasTitle}</h3>
           <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
             {extras.map((p, i) => (
-              <button
-                key={p.id}
-                onClick={() => setDetails(p)}
-                style={{ "--i": i } as React.CSSProperties}
-                className="lift stagger animate-fade-up rounded-2xl border border-line bg-paper px-4 py-3.5 text-left shadow-[var(--shadow-card)] hover:border-gold"
-              >
-                <p className="font-medium text-ink">
-                  <span className="text-gold-dark">{p.id}</span> — {p.name}
-                </p>
-                <p className="mt-0.5 text-xs text-ink-soft">
-                  {p.family} · {t.ui.intensityLabels[p.intensity - 1]}
-                </p>
-              </button>
+              <Reveal key={p.id} index={i}>
+                <button
+                  onClick={() => setDetails(p)}
+                  className="lift w-full rounded-2xl border border-line bg-paper px-4 py-3.5 text-left shadow-[var(--shadow-card)] hover:border-gold"
+                >
+                  <p className="font-medium text-ink">
+                    <span className="text-gold-dark">{p.id}</span> — {p.name}
+                  </p>
+                  <p className="mt-0.5 text-xs text-ink-soft">
+                    {p.family} · {t.ui.intensityLabels[p.intensity - 1]}
+                  </p>
+                </button>
+              </Reveal>
             ))}
           </div>
         </section>

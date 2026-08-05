@@ -40,8 +40,18 @@ Direction premium, sobre et élégante : blanc cassé / noir / doré léger.
 - **Mouvement** : apparitions en cascade plafonnées à 0,4 s, courbes douces (`--ease-out-soft`,
   `--ease-spring`), soulèvement au survol et enfoncement au toucher (classe `.lift`),
   reflet animé sur la barre de progression, modales en fondu + léger rebond.
-- **Accessibilité** : `prefers-reduced-motion` désactive toutes les animations ;
-  cibles tactiles généreuses ; aucun défilement horizontal.
+- **Rythme du parcours** : chaque choix est acquitté par une brève confirmation dorée
+  (190 ms) avant de passer à la suite, avec retour haptique quand l'appareil le permet ;
+  un **instant de composition** (`src/components/Composing.tsx`) précède le résultat pour
+  faire de la révélation des trois parfums un vrai moment.
+- **Transitions d'écran** : API View Transitions (`src/hooks/useScreenTransition.ts`) pour un
+  fondu croisé accéléré par le GPU, avec repli automatique sur les navigateurs sans support.
+- **Apparition au défilement** : `src/components/Reveal.tsx` révèle le contenu à mesure qu'il
+  entre dans l'écran ; un contrôle de position double l'IntersectionObserver pour qu'aucun
+  élément ne puisse rester invisible après un défilement rapide.
+- **Accessibilité** : `prefers-reduced-motion` désactive animations, transitions d'écran et
+  apparitions au défilement (le contenu reste alors toujours visible) ; cibles tactiles
+  généreuses ; aucun défilement horizontal.
 
 Tous les réglages visuels (couleurs, ombres, courbes, animations) sont centralisés
 dans [`src/index.css`](src/index.css).
@@ -91,10 +101,13 @@ src/
 │   ├── stats.ts           # Compteurs agrégés anonymes (réassort)
 │   └── history.ts         # Historique localStorage
 ├── hooks/
-│   └── useIdleTimer.ts    # Mode kiosque (retour auto à l'accueil)
+│   ├── useIdleTimer.ts    # Mode kiosque (retour auto à l'accueil)
+│   └── useScreenTransition.ts  # Transitions d'écran (View Transitions API)
 ├── components/
 │   ├── Home.tsx           # Écran d'accueil + sélecteur de langue
 │   ├── Questionnaire.tsx  # Une question par écran + branchement
+│   ├── Composing.tsx      # Instant de composition avant le résultat
+│   ├── Reveal.tsx         # Apparition au défilement
 │   ├── Results.tsx        # Profil, top 3, prix, QR, mot de Thibault
 │   ├── Equivalence.tsx    # « Quel parfum portez-vous ? »
 │   ├── PerfumeModal.tsx   # Fiche parfum détaillée
