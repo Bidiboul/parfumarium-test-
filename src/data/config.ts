@@ -10,7 +10,7 @@ export const CONFIG = {
    * borne en libre-service.
    * ⚠️ À personnaliser avant la mise en boutique.
    */
-  sellerPin: "1234",
+  sellerPin: "2003",
 
   /** Durée conseillée entre deux essais olfactifs, en secondes. */
   testGuideSeconds: 120,
