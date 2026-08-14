@@ -35,7 +35,7 @@ export default function QuickCode({ onSubmit, onBack }: QuickCodeProps) {
         ←
       </button>
 
-      <p className="mt-6 text-[11px] font-semibold tracking-[0.3em] text-gold uppercase">Mode vendeur</p>
+      <p className="mt-6 text-[0.6875rem] font-semibold tracking-[0.3em] text-gold-dark uppercase">Mode vendeur</p>
       <h2 className="mt-2 font-serif text-3xl text-ink">Code rapide</h2>
       <p className="mt-2 text-sm text-ink-soft">
         Entrez un code à 5 chiffres pour afficher directement la sélection.

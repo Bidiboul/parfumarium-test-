@@ -9,8 +9,15 @@
 
 import { useEffect, useRef } from "react";
 
-/** Délai d'inactivité avant retour automatique à l'accueil (ms). */
-export const KIOSK_TIMEOUT_MS = 90_000;
+/**
+ * Délai d'inactivité avant retour automatique à l'accueil (ms).
+ * Calé sur le rythme d'un totem de rue : un passant qui s'éloigne ne
+ * doit pas laisser sa sélection affichée au suivant.
+ */
+export const KIOSK_TIMEOUT_MS = 60_000;
+
+/** Délai avant l'apparition de l'écran d'attente, sur l'accueil (ms). */
+export const ATTRACT_TIMEOUT_MS = 45_000;
 
 /**
  * Appelle `onIdle` après `timeout` ms sans interaction.

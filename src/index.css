@@ -85,6 +85,58 @@ html {
   scroll-behavior: smooth;
 }
 
+/* --------------------------------------------------------------------------
+   Mise à l'échelle « borne »
+
+   Toutes les tailles de l'interface sont exprimées en rem : agrandir la
+   taille de police racine agrandit d'un bloc le texte, les espacements,
+   les rayons et la largeur des colonnes. Un seul réglage suffit donc à
+   passer d'une tablette à un totem tactile.
+
+   Cible : totem 43 pouces en portrait (1080 × 1920). À cette taille, un
+   pixel CSS vaut environ un demi-millimètre : le texte courant passe de
+   8 à 12 mm et les boutons dépassent 4 cm de haut, ce qui correspond à
+   une lecture et un appui confortables à 1,50 m.
+
+   Les conditions portent aussi sur la hauteur pour ne pas modifier
+   l'affichage sur un écran d'ordinateur classique (1920 × 1080).
+   -------------------------------------------------------------------------- */
+@media (min-width: 900px) and (min-height: 1300px) {
+  html {
+    font-size: 20px;
+  }
+}
+
+@media (min-width: 1000px) and (min-height: 1700px) {
+  html {
+    font-size: 24px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Durcissement tactile
+
+   Sur une borne en libre accès, la sélection de texte, le menu contextuel
+   au appui long et le zoom par double-tape cassent la mise en page sans
+   qu'aucun vendeur ne soit là pour rétablir l'affichage.
+   -------------------------------------------------------------------------- */
+body {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  /* Supprime le délai de 300 ms et le zoom par double-tape. */
+  touch-action: manipulation;
+  /* Empêche l'effet de rebond en bout de défilement. */
+  overscroll-behavior: none;
+}
+
+/* Les champs de saisie doivent rester sélectionnables. */
+input,
+textarea {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
 body {
   font-family: var(--font-sans);
   color: var(--color-ink);

@@ -47,7 +47,7 @@ export default function PerfumeModal({ perfume, onClose }: PerfumeModalProps) {
             <p className="mt-1 text-sm text-ink-soft">{perfume.family}</p>
           </div>
           <span className="shrink-0 rounded-full border border-line bg-cream px-3 py-1.5 text-right">
-            <span className="block text-[10px] leading-none text-ink-soft">{t.ui.priceFrom}</span>
+            <span className="block text-[0.625rem] leading-none text-ink-soft">{t.ui.priceFrom}</span>
             <span className="block font-serif text-xl leading-tight text-ink">
               {money(entryFormat().price, lang)}
             </span>
@@ -64,7 +64,7 @@ export default function PerfumeModal({ perfume, onClose }: PerfumeModalProps) {
 
         {/* Intensité */}
         <div className="mt-5">
-          <p className="text-[11px] font-semibold tracking-[0.2em] text-gold uppercase">
+          <p className="text-[0.6875rem] font-semibold tracking-[0.2em] text-gold-dark uppercase">
             {t.ui.intensityLabels[0]} → {t.ui.intensityLabels[3]}
           </p>
           <div className="mt-2 flex items-center gap-3">
@@ -80,7 +80,7 @@ export default function PerfumeModal({ perfume, onClose }: PerfumeModalProps) {
 
         {/* Notes olfactives */}
         <section className="mt-5">
-          <h4 className="text-[11px] font-semibold tracking-[0.2em] text-gold uppercase">
+          <h4 className="text-[0.6875rem] font-semibold tracking-[0.2em] text-gold-dark uppercase">
             {t.ui.notesTitle}
           </h4>
           <div className="mt-2 flex flex-wrap gap-1.5">
@@ -97,7 +97,7 @@ export default function PerfumeModal({ perfume, onClose }: PerfumeModalProps) {
 
         {/* Moments conseillés */}
         <section className="mt-5">
-          <h4 className="text-[11px] font-semibold tracking-[0.2em] text-gold uppercase">
+          <h4 className="text-[0.6875rem] font-semibold tracking-[0.2em] text-gold-dark uppercase">
             {t.ui.occasionsTitle}
           </h4>
           <p className="mt-1.5 text-sm text-ink capitalize">{perfume.occasions.join(" · ")}</p>
@@ -105,7 +105,7 @@ export default function PerfumeModal({ perfume, onClose }: PerfumeModalProps) {
 
         {/* Style */}
         <section className="mt-5">
-          <h4 className="text-[11px] font-semibold tracking-[0.2em] text-gold uppercase">
+          <h4 className="text-[0.6875rem] font-semibold tracking-[0.2em] text-gold-dark uppercase">
             {t.ui.stylesTitle}
           </h4>
           <div className="mt-2 flex flex-wrap gap-1.5">
@@ -122,7 +122,7 @@ export default function PerfumeModal({ perfume, onClose }: PerfumeModalProps) {
 
         {/* Formats, tarifs et offre duo */}
         <section className="mt-6 rounded-2xl border border-line bg-cream/60 p-4">
-          <h4 className="text-[11px] font-semibold tracking-[0.2em] text-gold uppercase">
+          <h4 className="text-[0.6875rem] font-semibold tracking-[0.2em] text-gold-dark uppercase">
             {t.ui.formatsTitle}
           </h4>
           <ul className="mt-2.5 divide-y divide-line/70">
@@ -131,7 +131,7 @@ export default function PerfumeModal({ perfume, onClose }: PerfumeModalProps) {
                 <span className="text-sm font-medium text-ink">{format.ml} ml</span>
                 <span className="text-right">
                   <span className="font-serif text-lg text-ink">{money(format.price, lang)}</span>
-                  <span className="ml-2 text-[11px] text-ink-soft">
+                  <span className="ml-2 text-[0.6875rem] text-ink-soft">
                     {t.ui.duoPer(money(duoPrice(format), lang))}
                   </span>
                 </span>
@@ -145,7 +145,7 @@ export default function PerfumeModal({ perfume, onClose }: PerfumeModalProps) {
         </section>
 
         {/* Correspondance olfactive */}
-        <p className="mt-5 border-t border-line pt-3 text-[11px] text-ink-soft/70">
+        <p className="mt-5 border-t border-line pt-3 text-[0.6875rem] text-ink-soft/70">
           {t.ui.correspondence} {perfume.match}
         </p>
 

@@ -205,7 +205,7 @@ export default function Questionnaire({ onFinish, onQuit }: QuestionnaireProps) 
       <div key={`${step.key}-${stepIndex}`} className="mt-9 flex-1">
         <p
           style={{ "--i": 0 } as React.CSSProperties}
-          className="animate-fade-up stagger text-[11px] font-semibold tracking-[0.3em] text-gold uppercase"
+          className="animate-fade-up stagger text-[0.6875rem] font-semibold tracking-[0.3em] text-gold-dark uppercase"
         >
           {t.ui.question} {stepIndex + 1}
         </p>

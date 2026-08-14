@@ -42,6 +42,7 @@ export const en: Translation = {
     housesBack: "All houses",
     storyLink: "Our story",
     storyMore: "Read more",
+    touchToStart: "Touch the screen to begin",
     equivalenceButton: "I already know a perfume",
     equivalenceKicker: "Find the match",
     equivalenceTitle: "Which perfume do you wear?",

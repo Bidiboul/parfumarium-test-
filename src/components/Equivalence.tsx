@@ -151,7 +151,7 @@ export default function Equivalence({ onBack }: EquivalenceProps) {
             as="section"
             className="mt-6 rounded-3xl border border-gold/50 bg-gradient-to-b from-paper to-cream p-6 shadow-[var(--shadow-card)]"
           >
-            <p className="text-[11px] font-semibold tracking-[0.3em] text-gold uppercase">
+            <p className="text-[0.6875rem] font-semibold tracking-[0.3em] text-gold-dark uppercase">
               {t.ui.equivalenceResult}
             </p>
             <p className="mt-3 text-sm text-ink-soft">
@@ -166,7 +166,7 @@ export default function Equivalence({ onBack }: EquivalenceProps) {
                 <span className="text-gold-dark">{perfume.id}</span> — {perfume.name}
               </h3>
               <span className="shrink-0 rounded-full border border-line bg-cream px-3 py-1 text-right">
-                <span className="block text-[9px] leading-none text-ink-soft">{t.ui.priceFrom}</span>
+                <span className="block text-[0.5625rem] leading-none text-ink-soft">{t.ui.priceFrom}</span>
                 <span className="block font-serif text-lg leading-tight text-ink">
                   {money(entryFormat().price, lang)}
                 </span>
@@ -201,7 +201,7 @@ export default function Equivalence({ onBack }: EquivalenceProps) {
       <>
         {/* Fiche de la référence : ses notes olfactives */}
         <Reveal as="section" className="mt-6 rounded-3xl border border-line bg-paper p-5 shadow-[var(--shadow-card)]">
-          <p className="text-[11px] font-semibold tracking-[0.3em] text-ink-soft/70 uppercase">
+          <p className="text-[0.6875rem] font-semibold tracking-[0.3em] text-ink-soft/70 uppercase">
             {t.ui.referenceKicker}
           </p>
           <h3 className="mt-2 font-serif text-2xl leading-tight text-ink">{reference.name}</h3>
@@ -212,7 +212,7 @@ export default function Equivalence({ onBack }: EquivalenceProps) {
 
           {reference.accords.length > 0 && (
             <div className="mt-4">
-              <p className="text-[11px] font-semibold tracking-[0.2em] text-gold uppercase">
+              <p className="text-[0.6875rem] font-semibold tracking-[0.2em] text-gold-dark uppercase">
                 {t.ui.accordsTitle}
               </p>
               <div className="mt-2 flex flex-wrap gap-1.5">
@@ -230,7 +230,7 @@ export default function Equivalence({ onBack }: EquivalenceProps) {
 
           {reference.notes.length > 0 && (
             <div className="mt-4">
-              <p className="text-[11px] font-semibold tracking-[0.2em] text-gold uppercase">
+              <p className="text-[0.6875rem] font-semibold tracking-[0.2em] text-gold-dark uppercase">
                 {t.ui.notesTitle}
               </p>
               <div className="mt-2 flex flex-wrap gap-1.5">
@@ -254,7 +254,7 @@ export default function Equivalence({ onBack }: EquivalenceProps) {
               as="section"
               className="mt-4 rounded-3xl border border-gold/50 bg-gradient-to-b from-paper to-cream p-6 shadow-[var(--shadow-card)]"
             >
-              <p className="text-[11px] font-semibold tracking-[0.3em] text-gold uppercase">
+              <p className="text-[0.6875rem] font-semibold tracking-[0.3em] text-gold-dark uppercase">
                 {t.ui.closestMatch}
               </p>
               <div className="mt-3 flex items-start justify-between gap-3">
@@ -262,7 +262,7 @@ export default function Equivalence({ onBack }: EquivalenceProps) {
                   <span className="text-gold-dark">{match.best.id}</span> — {match.best.name}
                 </h3>
                 <span className="shrink-0 rounded-full border border-line bg-cream px-3 py-1 text-right">
-                  <span className="block text-[9px] leading-none text-ink-soft">{t.ui.priceFrom}</span>
+                  <span className="block text-[0.5625rem] leading-none text-ink-soft">{t.ui.priceFrom}</span>
                   <span className="block font-serif text-lg leading-tight text-ink">
                     {money(entryFormat().price, lang)}
                   </span>
@@ -325,7 +325,7 @@ export default function Equivalence({ onBack }: EquivalenceProps) {
           ←
         </button>
 
-        <p className="mt-6 text-[11px] font-semibold tracking-[0.3em] text-gold uppercase">
+        <p className="mt-6 text-[0.6875rem] font-semibold tracking-[0.3em] text-gold-dark uppercase">
           {t.ui.equivalenceKicker}
         </p>
         <h2 className="mt-2 font-serif text-3xl leading-tight text-ink">
@@ -411,7 +411,7 @@ export default function Equivalence({ onBack }: EquivalenceProps) {
         ←
       </button>
 
-      <p className="mt-6 text-[11px] font-semibold tracking-[0.3em] text-gold uppercase">
+      <p className="mt-6 text-[0.6875rem] font-semibold tracking-[0.3em] text-gold-dark uppercase">
         {t.ui.equivalenceKicker}
       </p>
       <h2 className="mt-2 font-serif text-3xl leading-tight text-balance text-ink">

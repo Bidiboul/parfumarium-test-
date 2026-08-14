@@ -42,6 +42,7 @@ export const de: Translation = {
     housesBack: "Alle Häuser",
     storyLink: "Unsere Geschichte",
     storyMore: "Weiterlesen",
+    touchToStart: "Bildschirm berühren, um zu beginnen",
     equivalenceButton: "Ich kenne bereits ein Parfum",
     equivalenceKicker: "Entsprechung finden",
     equivalenceTitle: "Welches Parfum tragen Sie?",

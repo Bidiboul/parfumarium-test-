@@ -58,7 +58,7 @@ export default function ShareModal({ data, onClose }: ShareModalProps) {
         className="animate-scale-in w-full max-w-sm rounded-3xl border border-line bg-paper p-6 text-center shadow-[var(--shadow-modal)]"
         onClick={(e) => e.stopPropagation()}
       >
-        <p className="text-[11px] font-semibold tracking-[0.3em] text-gold uppercase">Parfumarium</p>
+        <p className="text-[0.6875rem] font-semibold tracking-[0.3em] text-gold-dark uppercase">Parfumarium</p>
         <h3 className="mt-2 font-serif text-2xl text-ink">{t.ui.shareTitle}</h3>
 
         <div className="mx-auto mt-5 flex h-[240px] w-[240px] items-center justify-center rounded-2xl border border-line bg-white p-3">

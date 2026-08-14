@@ -84,7 +84,7 @@ function MainCard({
         </div>
         {/* Prix d'appel : le détail des formats est dans la fiche */}
         <span className="shrink-0 rounded-full border border-line bg-cream px-3 py-1 text-right">
-          <span className="block text-[9px] leading-none text-ink-soft">{t.ui.priceFrom}</span>
+          <span className="block text-[0.5625rem] leading-none text-ink-soft">{t.ui.priceFrom}</span>
           <span className="block font-serif text-lg leading-tight text-ink">
             {money(entryFormat().price, lang)}
           </span>
@@ -129,14 +129,14 @@ function MainCard({
 
       {/* Correspondance olfactive + lien boutique */}
       <div className="mt-3 flex items-center justify-between gap-3 border-t border-line pt-2.5">
-        <p className="text-[11px] leading-snug text-ink-soft/70">
+        <p className="text-[0.6875rem] leading-snug text-ink-soft/70">
           {t.ui.correspondence} {perfume.match}
         </p>
         <a
           href={productUrl(perfume)}
           target="_blank"
           rel="noopener noreferrer"
-          className="shrink-0 text-[11px] font-medium text-gold-dark underline-offset-2 transition hover:underline"
+          className="shrink-0 text-[0.6875rem] font-medium text-gold-dark underline-offset-2 transition hover:underline"
         >
           {t.ui.viewOnShop} →
         </a>
@@ -200,7 +200,7 @@ export default function Results({ answers, code, fromHistory, onRestart, onHome 
 
   return (
     <div className="mx-auto w-full max-w-xl px-5 pb-14 pt-6">
-      <p className="text-[11px] font-semibold tracking-[0.3em] text-gold uppercase">{t.ui.resultKicker}</p>
+      <p className="text-[0.6875rem] font-semibold tracking-[0.3em] text-gold-dark uppercase">{t.ui.resultKicker}</p>
       <h2 className="mt-2 font-serif text-3xl text-ink">{t.ui.resultTitle}</h2>
       <div className="mt-4">
         <AgentBubble message={t.agent.resultIntro} compact />
@@ -208,7 +208,7 @@ export default function Results({ answers, code, fromHistory, onRestart, onHome 
 
       {/* Profil olfactif nommé */}
       <section className="animate-fade-up mt-6 overflow-hidden rounded-3xl border border-gold/50 bg-gradient-to-b from-paper to-cream p-6 text-center shadow-[var(--shadow-card)]">
-        <p className="text-[11px] font-semibold tracking-[0.3em] text-gold uppercase">
+        <p className="text-[0.6875rem] font-semibold tracking-[0.3em] text-gold-dark uppercase">
           {t.ui.profileKicker}
         </p>
         <p className="text-shimmer mt-3 font-serif text-[2.4rem] leading-[1.05] text-balance">
@@ -240,7 +240,7 @@ export default function Results({ answers, code, fromHistory, onRestart, onHome 
           aria-hidden
           className="pointer-events-none absolute -top-16 -right-10 h-40 w-40 rounded-full bg-gold/20 blur-3xl"
         />
-        <p className="relative text-[11px] font-semibold tracking-[0.3em] text-gold-light uppercase">
+        <p className="relative text-[0.6875rem] font-semibold tracking-[0.3em] text-gold-light uppercase">
           {t.ui.agentWord(AGENT.name)}
         </p>
         <p className="relative mt-3 font-serif text-xl leading-relaxed text-pretty italic">

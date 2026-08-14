@@ -60,6 +60,8 @@ export interface Translation {
     /* Histoire de la maison */
     storyLink: string;
     storyMore: string;
+    /* Écran d'attente du totem */
+    touchToStart: string;
     /* Recherche par équivalence */
     equivalenceButton: string;
     equivalenceKicker: string;

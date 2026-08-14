@@ -29,7 +29,7 @@ export default function Story({ onBack }: StoryProps) {
         ←
       </button>
 
-      <p className="mt-6 text-[11px] font-semibold tracking-[0.3em] text-gold uppercase">
+      <p className="mt-6 text-[0.6875rem] font-semibold tracking-[0.3em] text-gold-dark uppercase">
         Parfumarium
       </p>
       <h2 className="mt-2 font-serif text-4xl leading-[1.05] text-balance text-ink">
@@ -43,7 +43,7 @@ export default function Story({ onBack }: StoryProps) {
           <Reveal key={h.label} index={i}>
             <div className="rounded-2xl border border-line bg-paper px-3 py-4 text-center shadow-[var(--shadow-card)]">
               <p className="font-serif text-2xl leading-none text-gold-dark">{h.value}</p>
-              <p className="mt-1.5 text-[11px] leading-snug text-ink-soft">{h.label}</p>
+              <p className="mt-1.5 text-[0.6875rem] leading-snug text-ink-soft">{h.label}</p>
             </div>
           </Reveal>
         ))}
@@ -53,7 +53,7 @@ export default function Story({ onBack }: StoryProps) {
       <div className="mt-8 space-y-5">
         {story.paragraphs.map((paragraph, i) => (
           <Reveal key={i} index={i}>
-            <p className="text-[15px] leading-relaxed text-pretty text-ink">{paragraph}</p>
+            <p className="text-[0.9375rem] leading-relaxed text-pretty text-ink">{paragraph}</p>
           </Reveal>
         ))}
       </div>

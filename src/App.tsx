@@ -21,7 +21,9 @@ import Search from "./components/Search";
 import History from "./components/History";
 import Stats from "./components/Stats";
 import SellerGate from "./components/SellerGate";
-import { useIdleTimer } from "./hooks/useIdleTimer";
+import SellerMenu from "./components/SellerMenu";
+import Attract from "./components/Attract";
+import { useIdleTimer, ATTRACT_TIMEOUT_MS } from "./hooks/useIdleTimer";
 import { useScreenTransition } from "./hooks/useScreenTransition";
 import { readSharedDiagnostic, clearShareParam } from "./utils/share";
 import type { Answers } from "./utils/recommendation";
@@ -34,6 +36,7 @@ type Screen =
   | "results"
   | "equivalence"
   | "story"
+  | "sellerMenu"
   | "code"
   | "search"
   | "history"
@@ -61,6 +64,9 @@ function AppContent() {
   // navigateur assure un fondu croisé fluide entre les deux états.
   const withTransition = useScreenTransition();
   const setScreen = (target: Screen) => withTransition(() => setScreenState(target));
+
+  /** Écran d'attente affiché après une longue inactivité sur l'accueil. */
+  const [attract, setAttract] = useState(false);
 
   /** Ouvre un écran vendeur, en demandant le code si nécessaire. */
   const openSellerScreen = (target: Screen) => {
@@ -102,6 +108,9 @@ function AppContent() {
   };
   useIdleTimer(returnToHome, screen !== "home" || pendingScreen !== null);
 
+  // Sur l'accueil, la veille animée prend le relais pour attirer l'œil.
+  useIdleTimer(() => setAttract(true), screen === "home" && !attract, ATTRACT_TIMEOUT_MS);
+
   // Saisie du code vendeur avant d'ouvrir un écran réservé.
   if (pendingScreen) {
     return (
@@ -140,10 +149,17 @@ function AppContent() {
           onStart={() => setScreen("quiz")}
           onEquivalence={() => setScreen("equivalence")}
           onStory={() => setScreen("story")}
-          onQuickCode={() => openSellerScreen("code")}
-          onSearch={() => openSellerScreen("search")}
-          onHistory={() => openSellerScreen("history")}
-          onStats={() => openSellerScreen("stats")}
+          onSellerAccess={() => openSellerScreen("sellerMenu")}
+        />
+      )}
+
+      {screen === "sellerMenu" && (
+        <SellerMenu
+          onQuickCode={() => setScreen("code")}
+          onSearch={() => setScreen("search")}
+          onHistory={() => setScreen("history")}
+          onStats={() => setScreen("stats")}
+          onBack={returnToHome}
         />
       )}
 
@@ -180,17 +196,20 @@ function AppContent() {
       {screen === "code" && (
         <QuickCode
           onSubmit={(answers, code) => showResults({ answers, code })}
-          onBack={() => setScreen("home")}
+          onBack={() => setScreen("sellerMenu")}
         />
       )}
 
-      {screen === "search" && <Search onBack={() => setScreen("home")} />}
+      {screen === "search" && <Search onBack={() => setScreen("sellerMenu")} />}
 
       {screen === "history" && (
-        <History onOpen={openHistoryEntry} onBack={() => setScreen("home")} />
+        <History onOpen={openHistoryEntry} onBack={() => setScreen("sellerMenu")} />
       )}
 
-      {screen === "stats" && <Stats onBack={() => setScreen("home")} />}
+      {screen === "stats" && <Stats onBack={() => setScreen("sellerMenu")} />}
+
+      {/* Veille animée : au premier contact, la borne reprend vie. */}
+      {attract && <Attract onDismiss={() => setAttract(false)} />}
     </div>
   );
 }

@@ -1,9 +1,12 @@
 /*
  * Écran d'accueil : sélection de la langue, présentation de Thibault
  * (l'agent olfactif digital) et lancement du diagnostic.
- * Les outils vendeur restent accessibles mais discrets en bas d'écran.
+ *
+ * L'espace vendeur n'est pas affiché : sur un totem en libre accès, il
+ * s'ouvre par un appui maintenu sur le logo, suivi du code.
  */
 
+import { useEffect, useRef } from "react";
 import { AGENT } from "../data/agent";
 import { STORY } from "../data/story";
 import { useI18n, LANGUAGES } from "../i18n";
@@ -12,23 +15,31 @@ interface HomeProps {
   onStart: () => void;
   onEquivalence: () => void;
   onStory: () => void;
-  onQuickCode: () => void;
-  onSearch: () => void;
-  onHistory: () => void;
-  onStats: () => void;
+  /** Ouvre l'espace vendeur (appui long sur le logo). */
+  onSellerAccess: () => void;
 }
 
-export default function Home({
-  onStart,
-  onEquivalence,
-  onStory,
-  onQuickCode,
-  onSearch,
-  onHistory,
-  onStats,
-}: HomeProps) {
+/** Durée de l'appui long ouvrant l'espace vendeur, en millisecondes. */
+const LONG_PRESS_MS = 900;
+
+export default function Home({ onStart, onEquivalence, onStory, onSellerAccess }: HomeProps) {
   const { lang, setLang, t } = useI18n();
   const story = STORY[lang];
+
+  /*
+   * Accès vendeur discret : un appui maintenu sur le logo ouvre la
+   * saisie du code. Rien ne le signale à l'écran, pour ne pas inviter
+   * les passants à explorer les outils de la boutique.
+   */
+  const pressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const startPress = () => {
+    pressTimer.current = setTimeout(onSellerAccess, LONG_PRESS_MS);
+  };
+  const cancelPress = () => {
+    if (pressTimer.current) clearTimeout(pressTimer.current);
+    pressTimer.current = null;
+  };
+  useEffect(() => cancelPress, []);
 
   return (
     <div className="flex min-h-dvh flex-col items-center px-6 pb-6 text-center">
@@ -59,13 +70,19 @@ export default function Home({
         {/* Logo texte */}
         <p
           style={{ "--i": 1 } as React.CSSProperties}
-          className="animate-fade-up stagger text-[10px] font-semibold tracking-[0.42em] text-gold uppercase sm:text-[11px]"
+          className="animate-fade-up stagger text-[0.625rem] font-semibold tracking-[0.42em] text-gold-dark uppercase sm:text-[0.6875rem]"
         >
           Vaison-la-Romaine · parfumarium.fr
         </p>
+        {/* Le logo cache l'accès vendeur : appui maintenu */}
         <h1
           style={{ "--i": 2 } as React.CSSProperties}
-          className="animate-fade-up stagger mt-3 font-serif text-6xl leading-[0.95] font-medium tracking-tight text-ink sm:text-7xl"
+          onPointerDown={startPress}
+          onPointerUp={cancelPress}
+          onPointerLeave={cancelPress}
+          onPointerCancel={cancelPress}
+          onContextMenu={(e) => e.preventDefault()}
+          className="animate-fade-up stagger mt-3 font-serif text-6xl leading-[0.95] font-medium tracking-tight text-ink select-none sm:text-7xl"
         >
           Parfumarium
         </h1>
@@ -142,7 +159,7 @@ export default function Home({
           style={{ "--i": 8 } as React.CSSProperties}
           className="lift animate-fade-up stagger mt-9 w-full max-w-sm rounded-3xl border border-line bg-paper/70 px-6 py-5 text-center backdrop-blur hover:border-gold"
         >
-          <span className="block text-[10px] font-semibold tracking-[0.3em] text-gold uppercase">
+          <span className="block text-[0.625rem] font-semibold tracking-[0.3em] text-gold-dark uppercase">
             {t.ui.storyLink}
           </span>
           <span className="mt-2 block font-serif text-lg leading-snug text-balance text-ink">
@@ -155,29 +172,6 @@ export default function Home({
         </button>
       </div>
 
-      {/* Espace vendeur, volontairement discret */}
-      <div
-        style={{ "--i": 8 } as React.CSSProperties}
-        className="animate-fade-up stagger w-full max-w-md border-t border-line/70 pt-4"
-      >
-        <p className="text-[10px] font-semibold tracking-[0.3em] text-ink-soft/50 uppercase">
-          {t.ui.sellerSpace}
-        </p>
-        <div className="mt-2 flex flex-wrap justify-center gap-x-5 gap-y-1 text-sm text-ink-soft/80">
-          <button onClick={onQuickCode} className="underline-offset-4 transition hover:text-gold-dark hover:underline">
-            Code rapide
-          </button>
-          <button onClick={onSearch} className="underline-offset-4 transition hover:text-gold-dark hover:underline">
-            Recherche n°
-          </button>
-          <button onClick={onHistory} className="underline-offset-4 transition hover:text-gold-dark hover:underline">
-            Historique
-          </button>
-          <button onClick={onStats} className="underline-offset-4 transition hover:text-gold-dark hover:underline">
-            Statistiques
-          </button>
-        </div>
-      </div>
     </div>
   );
 }

@@ -87,7 +87,7 @@ export default function Search({ onBack }: SearchProps) {
               {p.family} · {INTENSITY_LABELS[p.intensity - 1]}
             </p>
             <p className="mt-1 text-sm text-ink">{p.description}</p>
-            <p className="mt-1 text-[11px] text-ink-soft/70">Correspondance : {p.match}</p>
+            <p className="mt-1 text-[0.6875rem] text-ink-soft/70">Correspondance : {p.match}</p>
           </div>
         ))}
         {results.length === 0 && (

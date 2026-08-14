@@ -65,6 +65,7 @@ export const fr: Translation = {
     housesBack: "Toutes les maisons",
     storyLink: "Notre histoire",
     storyMore: "Lire la suite",
+    touchToStart: "Touchez l'écran pour commencer",
     equivalenceButton: "Je connais déjà un parfum",
     equivalenceKicker: "Recherche par équivalence",
     equivalenceTitle: "Quel parfum portez-vous ?",

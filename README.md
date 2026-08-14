@@ -172,6 +172,30 @@ la bonne référence **en première position dans 50 % des cas et dans le top 3 
 C'est la raison pour laquelle les correspondances officielles restent prioritaires et
 signalées comme telles : le calcul ne sert que pour les références qui n'en ont pas.
 
+## Totem tactile
+
+L'application est calée pour un **totem 43 pouces en portrait (1080 × 1920, Android)**.
+
+- **Mise à l'échelle** : toutes les tailles sont en `rem`, et la taille de police racine passe
+  à 24 px sur les grands écrans verticaux (`src/index.css`). Le texte courant atteint alors
+  12 mm et les boutons 4 cm de haut — lisible et cliquable à 1,50 m. Un seul réglage suffit
+  à adapter l'interface à une autre dalle.
+- **Espace vendeur masqué** : aucun lien visible. Appui maintenu (0,9 s) sur le logo de
+  l'accueil, puis code à 4 chiffres. Se reverrouille au retour automatique.
+- **Veille animée** : après 45 s sans contact sur l'accueil, un écran d'attente invite au
+  toucher et fait tourner trois messages (`src/components/Attract.tsx`). Évite aussi le
+  marquage de la dalle.
+- **Retour automatique** : 60 s d'inactivité renvoient à l'accueil, en français.
+- **Durcissement tactile** : sélection de texte, menu contextuel, zoom par double-tape et
+  rebond de défilement désactivés.
+- **Zone d'atteinte** : les actions principales se situent entre 65 et 95 cm du sol,
+  dans la plage recommandée pour l'accessibilité (38–122 cm).
+
+> ⚠️ **Luminosité.** La dalle annoncée est à 350 nits avec finition brillante : c'est une
+> valeur d'intérieur. Sous un auvent, en vitrine ou à l'ombre, l'affichage sera net ; en
+> plein soleil direct, aucun réglage logiciel ne compensera — il faudrait une dalle haute
+> luminosité (1 500 nits et plus) et un traitement antireflet.
+
 ## Avant la mise en boutique
 
 - [`src/data/config.ts`](src/data/config.ts) — **code d'accès vendeur** (`1234` par défaut).
