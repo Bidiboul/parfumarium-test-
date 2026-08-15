@@ -16,8 +16,8 @@ import { useEffect, useRef } from "react";
  */
 export const KIOSK_TIMEOUT_MS = 60_000;
 
-/** Délai avant l'apparition de l'écran d'attente, sur l'accueil (ms). */
-export const ATTRACT_TIMEOUT_MS = 45_000;
+/** Délai avant le lancement du diaporama de veille, sur l'accueil (ms). */
+export const ATTRACT_TIMEOUT_MS = 300_000;
 
 /**
  * Appelle `onIdle` après `timeout` ms sans interaction.

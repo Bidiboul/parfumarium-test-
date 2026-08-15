@@ -39,12 +39,22 @@ export const FORMATS: Format[] = [
  */
 export const DUO_DISCOUNT = 10;
 
+/** Contenance minimale ouvrant droit à l'offre duo. */
+export const DUO_MIN_ML = 50;
+
 /** Format le moins cher — sert de prix d'appel « à partir de ». */
 export const entryFormat = (): Format =>
   FORMATS.reduce((cheapest, f) => (f.price < cheapest.price ? f : cheapest), FORMATS[0]);
 
-/** Prix d'un duo pour un format donné, réduction déduite. */
-export const duoPrice = (format: Format): number => format.price * 2 - DUO_DISCOUNT;
+/** Vrai si le format ouvre droit à l'offre duo. */
+export const duoEligible = (format: Format): boolean => format.ml >= DUO_MIN_ML;
+
+/**
+ * Prix d'un duo pour un format donné, réduction déduite.
+ * Retourne null si le format n'ouvre pas droit à l'offre.
+ */
+export const duoPrice = (format: Format): number | null =>
+  duoEligible(format) ? format.price * 2 - DUO_DISCOUNT : null;
 
 /**
  * Montant formaté selon la langue affichée : « 39,90 € », mais « 10 € »

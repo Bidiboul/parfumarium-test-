@@ -49,7 +49,7 @@ export interface Translation {
     /* Formats et offre duo */
     formatsTitle: string;
     duoTitle: string;
-    duoDetail: (discount: string) => string;
+    duoDetail: (discount: string, minMl: number) => string;
     duoPer: (price: string) => string;
     /* Parcours par maison */
     housesButton: string;
@@ -62,6 +62,11 @@ export interface Translation {
     storyMore: string;
     /* Écran d'attente du totem */
     touchToStart: string;
+    touchMe: string;
+    slideDiscover: string;
+    slideDuoHeadline: (discount: string) => string;
+    slideDuoDetail: (minMl: number) => string;
+    slideDiagnosis: string;
     /* Recherche par équivalence */
     equivalenceButton: string;
     equivalenceKicker: string;

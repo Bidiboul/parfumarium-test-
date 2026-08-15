@@ -63,7 +63,7 @@ dans [`src/index.css`](src/index.css).
   2. à défaut, **la référence la plus proche calculée** à partir de l'index (`src/utils/fragranceIndex.ts`).
   Voir la section « Base de références » plus bas.
 - **Parcourir par maison** : pour le client qui se souvient de la marque mais pas du nom. Les maisons dont la boutique propose des équivalences (Guerlain, Dior, Chanel…) apparaissent en premier, signalées d'un point doré ; les autres suivent, avec un champ de recherche.
-- **Formats, tarifs et offre duo** : 30 ml à 39,90 €, 50 ml à 69,90 €, 100 ml à 89,90 €, et **10 € de réduction pour deux flacons du même format**. Le détail par format et le prix du duo figurent sur chaque fiche parfum ; les cartes affichent le prix d'appel. Tout est modifiable dans [`src/data/shop.ts`](src/data/shop.ts).
+- **Formats, tarifs et offre duo** : 30 ml à 39,90 €, 50 ml à 69,90 €, 100 ml à 89,90 €, et **10 € de réduction pour deux flacons du même format, à partir du 50 ml** (les deux parfums peuvent être différents). Le détail par format et le prix du duo figurent sur chaque fiche parfum ; les cartes affichent le prix d'appel. Tout est modifiable dans [`src/data/shop.ts`](src/data/shop.ts) — y compris la contenance minimale ouvrant droit à l'offre (`DUO_MIN_ML`).
 - **L'histoire de la maison** : une carte sur l'accueil ouvre un écran de présentation (récit, repères, formats et tarifs), traduit dans les 5 langues. Texte modifiable dans [`src/data/story.ts`](src/data/story.ts).
 - **Profil olfactif nommé** : chaque diagnostic donne un profil (« Gourmand Sensuel », « Boisé Magnétique »…) affiché en tête du résultat, traduit dans les 5 langues (`src/utils/profile.ts`).
 - **Fiche parfum détaillée** : au clic sur un parfum, notes olfactives, jauge d'intensité, moments conseillés, style, prix et lien boutique (`src/components/PerfumeModal.tsx`).
@@ -182,9 +182,15 @@ L'application est calée pour un **totem 43 pouces en portrait (1080 × 1920, An
   à adapter l'interface à une autre dalle.
 - **Espace vendeur masqué** : aucun lien visible. Appui maintenu (0,9 s) sur le logo de
   l'accueil, puis code à 4 chiffres. Se reverrouille au retour automatique.
-- **Veille animée** : après 45 s sans contact sur l'accueil, un écran d'attente invite au
-  toucher et fait tourner trois messages (`src/components/Attract.tsx`). Évite aussi le
-  marquage de la dalle.
+- **Diaporama de veille** : après 5 min sans contact sur l'accueil, quatre vues défilent
+  (la maison, les 50 fragrances, **l'offre duo mise en avant**, le diagnostic offert), sous
+  un « Touchez-moi » qui rebondit doucement (`src/components/Slideshow.tsx`). Évite aussi
+  le marquage de la dalle.
+  Les visuels sont des illustrations vectorielles (`src/components/BottleArt.tsx`) : nettes
+  à toute résolution, sans poids et disponibles hors-ligne. Pour utiliser de vraies
+  photographies, déposez vos fichiers dans `public/slideshow/` et renseignez la constante
+  `PHOTOS` en tête de `Slideshow.tsx` — l'habillage (titre, offre, appel au toucher) est
+  conservé.
 - **Retour automatique** : 60 s d'inactivité renvoient à l'accueil, en français.
 - **Durcissement tactile** : sélection de texte, menu contextuel, zoom par double-tape et
   rebond de défilement désactivés.

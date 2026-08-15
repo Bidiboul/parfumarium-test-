@@ -271,6 +271,40 @@ h3 {
   }
 }
 
+/* Rebond léger de l'invitation au toucher, sur la veille du totem :
+   assez pour accrocher l'œil d'un passant, assez doux pour rester
+   élégant. */
+@keyframes nudge {
+  0%,
+  55%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  20% {
+    transform: translate3d(0, -14px, 0);
+  }
+  35% {
+    transform: translate3d(0, -6px, 0);
+  }
+}
+
+/* Fondu enchaîné lent d'une vue du diaporama, avec un très léger
+   rapprochement : l'image reste vivante sans distraire. */
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: scale(1.06);
+  }
+  12%,
+  88% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 /* Entrée d'un écran (utilisé en repli si les View Transitions
    ne sont pas disponibles). */
 @keyframes screen-in {
@@ -302,6 +336,14 @@ h3 {
 
 .animate-spin-slow {
   animation: spin-slow 2.4s linear infinite;
+}
+
+.animate-nudge {
+  animation: nudge 2.8s var(--ease-out-soft) infinite;
+}
+
+.animate-slide {
+  animation: slide-in 9s ease-out both;
 }
 
 .animate-screen-in {

@@ -9,7 +9,7 @@
 import Reveal from "./Reveal";
 import { useI18n } from "../i18n";
 import { STORY } from "../data/story";
-import { FORMATS, DUO_DISCOUNT, money } from "../data/shop";
+import { FORMATS, DUO_DISCOUNT, DUO_MIN_ML, money } from "../data/shop";
 
 interface StoryProps {
   onBack: () => void;
@@ -76,7 +76,7 @@ export default function Story({ onBack }: StoryProps) {
           </ul>
           <p className="mt-4 rounded-2xl bg-cream px-4 py-3 text-sm leading-relaxed text-ink-soft">
             <span className="font-medium text-gold-dark">{t.ui.duoTitle}</span>{" "}
-            {t.ui.duoDetail(money(DUO_DISCOUNT, lang))}
+            {t.ui.duoDetail(money(DUO_DISCOUNT, lang), DUO_MIN_ML)}
           </p>
         </div>
       </Reveal>

@@ -6,7 +6,7 @@
 
 import { useEffect } from "react";
 import { useI18n, getDescription } from "../i18n";
-import { FORMATS, DUO_DISCOUNT, duoPrice, entryFormat, money, productUrl } from "../data/shop";
+import { FORMATS, DUO_DISCOUNT, DUO_MIN_ML, duoPrice, entryFormat, money, productUrl } from "../data/shop";
 import type { Perfume } from "../data/perfumes";
 
 interface PerfumeModalProps {
@@ -126,21 +126,27 @@ export default function PerfumeModal({ perfume, onClose }: PerfumeModalProps) {
             {t.ui.formatsTitle}
           </h4>
           <ul className="mt-2.5 divide-y divide-line/70">
-            {FORMATS.map((format) => (
-              <li key={format.ml} className="flex items-baseline justify-between gap-3 py-2">
-                <span className="text-sm font-medium text-ink">{format.ml} ml</span>
-                <span className="text-right">
-                  <span className="font-serif text-lg text-ink">{money(format.price, lang)}</span>
-                  <span className="ml-2 text-[0.6875rem] text-ink-soft">
-                    {t.ui.duoPer(money(duoPrice(format), lang))}
+            {FORMATS.map((format) => {
+              // Le duo ne s'applique qu'à partir d'une certaine contenance.
+              const duo = duoPrice(format);
+              return (
+                <li key={format.ml} className="flex items-baseline justify-between gap-3 py-2">
+                  <span className="text-sm font-medium text-ink">{format.ml} ml</span>
+                  <span className="text-right">
+                    <span className="font-serif text-lg text-ink">{money(format.price, lang)}</span>
+                    {duo !== null && (
+                      <span className="ml-2 text-[0.6875rem] text-gold-dark">
+                        {t.ui.duoPer(money(duo, lang))}
+                      </span>
+                    )}
                   </span>
-                </span>
-              </li>
-            ))}
+                </li>
+              );
+            })}
           </ul>
           <p className="mt-3 text-xs leading-relaxed text-ink-soft">
             <span className="font-medium text-gold-dark">{t.ui.duoTitle}</span>{" "}
-            {t.ui.duoDetail(money(DUO_DISCOUNT, lang))}
+            {t.ui.duoDetail(money(DUO_DISCOUNT, lang), DUO_MIN_ML)}
           </p>
         </section>
 

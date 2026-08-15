@@ -22,7 +22,7 @@ import History from "./components/History";
 import Stats from "./components/Stats";
 import SellerGate from "./components/SellerGate";
 import SellerMenu from "./components/SellerMenu";
-import Attract from "./components/Attract";
+import Slideshow from "./components/Slideshow";
 import { useIdleTimer, ATTRACT_TIMEOUT_MS } from "./hooks/useIdleTimer";
 import { useScreenTransition } from "./hooks/useScreenTransition";
 import { readSharedDiagnostic, clearShareParam } from "./utils/share";
@@ -208,8 +208,8 @@ function AppContent() {
 
       {screen === "stats" && <Stats onBack={() => setScreen("sellerMenu")} />}
 
-      {/* Veille animée : au premier contact, la borne reprend vie. */}
-      {attract && <Attract onDismiss={() => setAttract(false)} />}
+      {/* Diaporama de veille : au premier contact, la borne reprend vie. */}
+      {attract && <Slideshow onDismiss={() => setAttract(false)} />}
     </div>
   );
 }
