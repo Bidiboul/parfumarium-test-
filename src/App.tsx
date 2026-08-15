@@ -55,8 +55,6 @@ function AppContent() {
   const { setLang } = useI18n();
   const [screen, setScreenState] = useState<Screen>("home");
   const [result, setResult] = useState<ResultState | null>(null);
-  /** Espace vendeur déverrouillé (jusqu'au prochain retour kiosque). */
-  const [sellerUnlocked, setSellerUnlocked] = useState(false);
   /** Écran vendeur demandé, en attente de saisie du code. */
   const [pendingScreen, setPendingScreen] = useState<Screen | null>(null);
 
@@ -68,9 +66,13 @@ function AppContent() {
   /** Écran d'attente affiché après une longue inactivité sur l'accueil. */
   const [attract, setAttract] = useState(false);
 
-  /** Ouvre un écran vendeur, en demandant le code si nécessaire. */
+  /**
+   * Ouvre l'espace vendeur. Le code est redemandé à chaque accès depuis
+   * l'accueil : sur un totem en libre service, un déverrouillage qui
+   * survivrait au départ du vendeur laisserait les outils ouverts au
+   * client suivant. La navigation à l'intérieur de l'espace reste libre.
+   */
   const openSellerScreen = (target: Screen) => {
-    if (sellerUnlocked) return setScreen(target);
     withTransition(() => setPendingScreen(target));
   };
 
@@ -102,8 +104,6 @@ function AppContent() {
     setScreen("home");
     setResult(null);
     setPendingScreen(null);
-    // Re-verrouiller l'espace vendeur : la borne redevient publique.
-    setSellerUnlocked(false);
     setLang(DEFAULT_LANG);
   };
   useIdleTimer(returnToHome, screen !== "home" || pendingScreen !== null);
@@ -118,7 +118,6 @@ function AppContent() {
         <SellerGate
           onUnlock={() =>
             withTransition(() => {
-              setSellerUnlocked(true);
               setScreenState(pendingScreen);
               setPendingScreen(null);
             })

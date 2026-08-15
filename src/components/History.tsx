@@ -6,6 +6,7 @@
 import { useState } from "react";
 import { loadHistory, clearHistory, type HistoryEntry } from "../utils/history";
 import { FAMILY_OPTIONS, GENDER_OPTIONS } from "../data/questions";
+import BackButton from "./BackButton";
 
 interface HistoryProps {
   onOpen: (entry: HistoryEntry) => void;
@@ -30,13 +31,7 @@ export default function History({ onOpen, onBack }: HistoryProps) {
 
   return (
     <div className="animate-fade-up mx-auto w-full max-w-xl px-5 pb-14 pt-6">
-      <button
-        onClick={onBack}
-        aria-label="Retour"
-        className="flex h-10 w-10 items-center justify-center rounded-full border border-line bg-paper text-lg transition hover:border-gold"
-      >
-        ←
-      </button>
+      <BackButton onClick={onBack} />
 
       <h2 className="mt-6 font-serif text-3xl text-ink">Derniers diagnostics</h2>
       <p className="mt-1 text-sm text-ink-soft">Conservés sur cet appareil uniquement.</p>
@@ -46,7 +41,7 @@ export default function History({ onOpen, onBack }: HistoryProps) {
           <button
             key={entry.id}
             onClick={() => onOpen(entry)}
-            className="w-full rounded-2xl border border-line bg-paper px-4 py-3 text-left transition hover:border-gold"
+            className="lift w-full rounded-2xl border border-line bg-paper px-4 py-3.5 text-left shadow-[var(--shadow-card)] hover:border-gold"
           >
             <div className="flex items-baseline justify-between gap-3">
               <p className="text-sm font-medium text-ink">

@@ -6,6 +6,7 @@
 import { useState } from "react";
 import { parseQuickCode, CODE_LEGEND } from "../utils/quickCode";
 import type { Answers } from "../utils/recommendation";
+import BackButton from "./BackButton";
 
 interface QuickCodeProps {
   onSubmit: (answers: Answers, code: string) => void;
@@ -27,13 +28,7 @@ export default function QuickCode({ onSubmit, onBack }: QuickCodeProps) {
 
   return (
     <div className="animate-fade-up mx-auto w-full max-w-xl px-5 pb-14 pt-6">
-      <button
-        onClick={onBack}
-        aria-label="Retour"
-        className="flex h-10 w-10 items-center justify-center rounded-full border border-line bg-paper text-lg transition hover:border-gold"
-      >
-        ←
-      </button>
+      <BackButton onClick={onBack} />
 
       <p className="mt-6 text-[0.6875rem] font-semibold tracking-[0.3em] text-gold-dark uppercase">Mode vendeur</p>
       <h2 className="mt-2 font-serif text-3xl text-ink">Code rapide</h2>
@@ -52,12 +47,12 @@ export default function QuickCode({ onSubmit, onBack }: QuickCodeProps) {
           inputMode="numeric"
           placeholder="14134"
           aria-label="Code à 5 chiffres"
-          className="w-full flex-1 rounded-2xl border border-line bg-paper px-5 py-4 text-center font-serif text-3xl tracking-[0.4em] text-ink outline-none transition focus:border-gold"
+          className="w-full flex-1 rounded-2xl border border-line bg-paper px-5 py-4 text-center font-serif text-3xl tracking-[0.4em] text-ink shadow-[var(--shadow-card)] outline-none transition focus:border-gold"
         />
         <button
           onClick={submit}
           disabled={code.length !== 5}
-          className="rounded-2xl bg-ink px-6 text-base font-medium text-cream transition hover:bg-gold-dark disabled:opacity-40"
+          className="lift rounded-2xl bg-ink px-7 text-base font-medium text-cream hover:bg-gold-dark disabled:opacity-40"
         >
           Voir
         </button>

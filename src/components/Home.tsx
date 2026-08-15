@@ -74,15 +74,9 @@ export default function Home({ onStart, onEquivalence, onStory, onSellerAccess }
         >
           Vaison-la-Romaine · parfumarium.fr
         </p>
-        {/* Le logo cache l'accès vendeur : appui maintenu */}
         <h1
           style={{ "--i": 2 } as React.CSSProperties}
-          onPointerDown={startPress}
-          onPointerUp={cancelPress}
-          onPointerLeave={cancelPress}
-          onPointerCancel={cancelPress}
-          onContextMenu={(e) => e.preventDefault()}
-          className="animate-fade-up stagger mt-3 font-serif text-6xl leading-[0.95] font-medium tracking-tight text-ink select-none sm:text-7xl"
+          className="animate-fade-up stagger mt-3 font-serif text-6xl leading-[0.95] font-medium tracking-tight text-ink sm:text-7xl"
         >
           Parfumarium
         </h1>
@@ -96,7 +90,20 @@ export default function Home({ onStart, onEquivalence, onStory, onSellerAccess }
           style={{ "--i": 4 } as React.CSSProperties}
           className="animate-fade-up stagger mt-12 flex flex-col items-center"
         >
-          <span className="relative flex h-24 w-24 items-center justify-center">
+          {/*
+            Le monogramme de Thibault cache l'accès vendeur : un appui
+            maintenu l'ouvre. Rien ne le signale à l'écran, et un appui
+            bref reste sans effet pour qu'un client curieux ne tombe
+            jamais dessus par hasard.
+          */}
+          <span
+            onPointerDown={startPress}
+            onPointerUp={cancelPress}
+            onPointerLeave={cancelPress}
+            onPointerCancel={cancelPress}
+            onContextMenu={(e) => e.preventDefault()}
+            className="relative flex h-24 w-24 cursor-default items-center justify-center select-none"
+          >
             {/* Halo respirant */}
             <span
               aria-hidden

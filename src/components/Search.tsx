@@ -5,6 +5,7 @@
 
 import { useMemo, useState } from "react";
 import { perfumes, type Gender } from "../data/perfumes";
+import BackButton from "./BackButton";
 
 interface SearchProps {
   onBack: () => void;
@@ -34,13 +35,7 @@ export default function Search({ onBack }: SearchProps) {
 
   return (
     <div className="animate-fade-up mx-auto w-full max-w-xl px-5 pb-14 pt-6">
-      <button
-        onClick={onBack}
-        aria-label="Retour"
-        className="flex h-10 w-10 items-center justify-center rounded-full border border-line bg-paper text-lg transition hover:border-gold"
-      >
-        ←
-      </button>
+      <BackButton onClick={onBack} />
 
       <h2 className="mt-6 font-serif text-3xl text-ink">Recherche par numéro</h2>
 
@@ -50,7 +45,7 @@ export default function Search({ onBack }: SearchProps) {
         inputMode="search"
         placeholder="Numéro ou nom… (ex. 1038)"
         aria-label="Recherche par numéro ou nom"
-        className="mt-4 w-full rounded-2xl border border-line bg-paper px-5 py-3.5 text-lg text-ink outline-none transition focus:border-gold"
+        className="mt-4 w-full rounded-2xl border border-line bg-paper px-5 py-4 text-lg text-ink shadow-[var(--shadow-card)] outline-none transition focus:border-gold"
       />
 
       {/* Filtre par genre */}
@@ -76,7 +71,7 @@ export default function Search({ onBack }: SearchProps) {
       </p>
       <div className="mt-2 space-y-2">
         {results.map((p) => (
-          <div key={p.id} className="rounded-2xl border border-line bg-paper px-4 py-3">
+          <div key={p.id} className="rounded-2xl border border-line bg-paper px-4 py-3.5 shadow-[var(--shadow-card)]">
             <div className="flex items-baseline justify-between gap-3">
               <p className="font-serif text-xl text-ink">
                 <span className="text-gold-dark">{p.id}</span> — {p.name}

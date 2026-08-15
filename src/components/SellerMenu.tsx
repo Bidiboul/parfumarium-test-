@@ -1,10 +1,13 @@
 /*
  * Menu de l'espace vendeur (en français).
  *
- * Accessible uniquement par appui long sur le logo de l'accueil, puis
+ * Accessible uniquement par appui maintenu sur le monogramme de
+ * Thibault, sur l'accueil, puis
  * saisie du code : sur un totem en libre accès, afficher ces outils
  * inviterait les passants à s'en servir.
  */
+
+import BackButton from "./BackButton";
 
 interface SellerMenuProps {
   onQuickCode: () => void;
@@ -37,13 +40,7 @@ export default function SellerMenu({
 
   return (
     <div className="animate-fade-up mx-auto w-full max-w-xl px-5 pb-14 pt-6">
-      <button
-        onClick={onBack}
-        aria-label="Retour"
-        className="lift flex h-11 w-11 items-center justify-center rounded-full border border-line bg-paper text-lg hover:border-gold"
-      >
-        ←
-      </button>
+      <BackButton onClick={onBack} />
 
       <p className="mt-6 text-[0.6875rem] font-semibold tracking-[0.3em] text-gold-dark uppercase">
         Espace vendeur
@@ -69,7 +66,7 @@ export default function SellerMenu({
       </div>
 
       <p className="mt-8 text-center text-xs text-ink-soft/70">
-        L'espace se reverrouille au retour automatique à l'accueil.
+        Le code est redemandé à chaque retour à l'accueil.
       </p>
     </div>
   );

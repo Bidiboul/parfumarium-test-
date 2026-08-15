@@ -9,6 +9,7 @@ import { loadStats, clearStats, topEntries } from "../utils/stats";
 import { perfumes } from "../data/perfumes";
 import { FAMILY_OPTIONS, GENDER_OPTIONS } from "../data/questions";
 import { LANGUAGES } from "../i18n";
+import BackButton from "./BackButton";
 
 interface StatsProps {
   onBack: () => void;
@@ -67,13 +68,7 @@ export default function Stats({ onBack }: StatsProps) {
 
   return (
     <div className="animate-fade-up mx-auto w-full max-w-xl px-5 pb-14 pt-6">
-      <button
-        onClick={onBack}
-        aria-label="Retour"
-        className="flex h-10 w-10 items-center justify-center rounded-full border border-line bg-paper text-lg transition hover:border-gold"
-      >
-        ←
-      </button>
+      <BackButton onClick={onBack} />
 
       <h2 className="mt-6 font-serif text-3xl text-ink">Statistiques</h2>
       <p className="mt-1 text-sm text-ink-soft">Synthèse locale et anonyme, sur cet appareil.</p>
@@ -85,7 +80,7 @@ export default function Stats({ onBack }: StatsProps) {
       ) : (
         <>
           {/* Total */}
-          <div className="mt-6 rounded-3xl border border-line bg-paper p-5 text-center">
+          <div className="mt-6 rounded-3xl border border-line bg-paper p-6 text-center shadow-[var(--shadow-card)]">
             <p className="font-serif text-5xl text-gold-dark">{stats.total}</p>
             <p className="mt-1 text-sm text-ink-soft">
               diagnostic{stats.total > 1 ? "s" : ""} réalisé{stats.total > 1 ? "s" : ""}
@@ -93,7 +88,7 @@ export default function Stats({ onBack }: StatsProps) {
           </div>
 
           {/* Familles les plus demandées */}
-          <section className="mt-6 rounded-3xl border border-line bg-paper p-5">
+          <section className="mt-6 rounded-3xl border border-line bg-paper p-5 shadow-[var(--shadow-card)]">
             <h3 className="font-serif text-xl text-ink">Univers les plus demandés</h3>
             <div className="mt-4 space-y-3">
               {families.map(([key, value]) => (
@@ -103,7 +98,7 @@ export default function Stats({ onBack }: StatsProps) {
           </section>
 
           {/* Parfums les plus recommandés */}
-          <section className="mt-6 rounded-3xl border border-line bg-paper p-5">
+          <section className="mt-6 rounded-3xl border border-line bg-paper p-5 shadow-[var(--shadow-card)]">
             <h3 className="font-serif text-xl text-ink">Parfums les plus recommandés</h3>
             <p className="mt-0.5 text-xs text-ink-soft">Apparitions dans une sélection principale.</p>
             <div className="mt-4 space-y-3">
@@ -115,7 +110,7 @@ export default function Stats({ onBack }: StatsProps) {
 
           {/* Cibles + langues */}
           <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
-            <section className="rounded-3xl border border-line bg-paper p-5">
+            <section className="rounded-3xl border border-line bg-paper p-5 shadow-[var(--shadow-card)]">
               <h3 className="font-serif text-xl text-ink">Cibles</h3>
               <div className="mt-4 space-y-3">
                 {genders.map(([key, value]) => (
@@ -124,7 +119,7 @@ export default function Stats({ onBack }: StatsProps) {
               </div>
             </section>
 
-            <section className="rounded-3xl border border-line bg-paper p-5">
+            <section className="rounded-3xl border border-line bg-paper p-5 shadow-[var(--shadow-card)]">
               <h3 className="font-serif text-xl text-ink">Langues</h3>
               <div className="mt-4 space-y-2">
                 {langs.map(([code, value]) => {
@@ -144,7 +139,7 @@ export default function Stats({ onBack }: StatsProps) {
 
           {/* Satisfaction */}
           {totalFeedback > 0 && (
-            <section className="mt-6 rounded-3xl border border-line bg-paper p-5">
+            <section className="mt-6 rounded-3xl border border-line bg-paper p-5 shadow-[var(--shadow-card)]">
               <h3 className="font-serif text-xl text-ink">Avis sur les sélections</h3>
               <div className="mt-4 flex justify-around text-center">
                 {([
@@ -163,7 +158,7 @@ export default function Stats({ onBack }: StatsProps) {
 
           {/* Points d'abandon */}
           {abandons.length > 0 && (
-            <section className="mt-6 rounded-3xl border border-line bg-paper p-5">
+            <section className="mt-6 rounded-3xl border border-line bg-paper p-5 shadow-[var(--shadow-card)]">
               <h3 className="font-serif text-xl text-ink">Questionnaires abandonnés</h3>
               <p className="mt-0.5 text-xs text-ink-soft">
                 Étape à laquelle le client s'est arrêté — utile pour raccourcir le parcours.

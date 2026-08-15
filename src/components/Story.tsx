@@ -10,6 +10,7 @@ import Reveal from "./Reveal";
 import { useI18n } from "../i18n";
 import { STORY } from "../data/story";
 import { FORMATS, DUO_DISCOUNT, DUO_MIN_ML, money } from "../data/shop";
+import BackButton from "./BackButton";
 
 interface StoryProps {
   onBack: () => void;
@@ -21,13 +22,7 @@ export default function Story({ onBack }: StoryProps) {
 
   return (
     <div className="animate-fade-up mx-auto w-full max-w-xl px-5 pb-16 pt-6">
-      <button
-        onClick={onBack}
-        aria-label={t.ui.backHome}
-        className="lift flex h-11 w-11 items-center justify-center rounded-full border border-line bg-paper text-lg hover:border-gold"
-      >
-        ←
-      </button>
+      <BackButton onClick={onBack} />
 
       <p className="mt-6 text-[0.6875rem] font-semibold tracking-[0.3em] text-gold-dark uppercase">
         Parfumarium

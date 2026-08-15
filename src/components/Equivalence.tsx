@@ -35,6 +35,7 @@ import {
   type House,
 } from "../utils/fragranceIndex";
 import type { Perfume } from "../data/perfumes";
+import BackButton from "./BackButton";
 
 interface EquivalenceProps {
   onBack: () => void;
@@ -317,13 +318,7 @@ export default function Equivalence({ onBack }: EquivalenceProps) {
   if (houseQuery !== null && !selected) {
     return (
       <div className="animate-fade-up mx-auto w-full max-w-xl px-5 pb-14 pt-6">
-        <button
-          onClick={house ? () => setHouse(null) : closeHouses}
-          aria-label={t.ui.housesBack}
-          className="lift flex h-11 w-11 items-center justify-center rounded-full border border-line bg-paper text-lg hover:border-gold"
-        >
-          ←
-        </button>
+        <BackButton onClick={house ? () => setHouse(null) : closeHouses} />
 
         <p className="mt-6 text-[0.6875rem] font-semibold tracking-[0.3em] text-gold-dark uppercase">
           {t.ui.equivalenceKicker}
@@ -403,13 +398,7 @@ export default function Equivalence({ onBack }: EquivalenceProps) {
   /* -------------------------------------------------------------- */
   return (
     <div className="animate-fade-up mx-auto w-full max-w-xl px-5 pb-14 pt-6">
-      <button
-        onClick={houseQuery !== null ? closeHouses : onBack}
-        aria-label={t.ui.backHome}
-        className="lift flex h-11 w-11 items-center justify-center rounded-full border border-line bg-paper text-lg hover:border-gold"
-      >
-        ←
-      </button>
+      <BackButton onClick={houseQuery !== null ? closeHouses : onBack} />
 
       <p className="mt-6 text-[0.6875rem] font-semibold tracking-[0.3em] text-gold-dark uppercase">
         {t.ui.equivalenceKicker}
