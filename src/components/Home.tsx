@@ -3,10 +3,10 @@
  * (l'agent olfactif digital) et lancement du diagnostic.
  *
  * L'espace vendeur n'est pas affiché : sur un totem en libre accès, il
- * s'ouvre par un appui maintenu sur le logo, suivi du code.
+ * s'ouvre depuis le monogramme de Thibault, suivi du code.
  */
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AGENT } from "../data/agent";
 import { STORY } from "../data/story";
 import { useI18n, LANGUAGES } from "../i18n";
@@ -15,31 +15,77 @@ interface HomeProps {
   onStart: () => void;
   onEquivalence: () => void;
   onStory: () => void;
-  /** Ouvre l'espace vendeur (appui long sur le logo). */
+  /** Ouvre l'espace vendeur (geste caché sur le monogramme). */
   onSellerAccess: () => void;
 }
 
-/** Durée de l'appui long ouvrant l'espace vendeur, en millisecondes. */
-const LONG_PRESS_MS = 900;
+/** Durée de l'appui maintenu ouvrant l'espace vendeur, en millisecondes. */
+const LONG_PRESS_MS = 650;
+
+/** Écart maximal entre deux appuis pour valider un double appui. */
+const DOUBLE_TAP_MS = 400;
 
 export default function Home({ onStart, onEquivalence, onStory, onSellerAccess }: HomeProps) {
   const { lang, setLang, t } = useI18n();
   const story = STORY[lang];
 
   /*
-   * Accès vendeur discret : un appui maintenu sur le logo ouvre la
-   * saisie du code. Rien ne le signale à l'écran, pour ne pas inviter
-   * les passants à explorer les outils de la boutique.
+   * Accès vendeur discret, sur le monogramme de Thibault. Deux gestes
+   * l'ouvrent, pour qu'il réponde quel que soit le réflexe du vendeur :
+   *  - un appui maintenu, accompagné d'un anneau doré qui se déploie ;
+   *  - un double appui rapide.
+   * Rien ne le signale au repos : un client qui effleure le monogramme
+   * ne déclenche rien et ne voit rien.
    */
   const pressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const startPress = () => {
-    pressTimer.current = setTimeout(onSellerAccess, LONG_PRESS_MS);
+  const lastTap = useRef(0);
+  const [holding, setHolding] = useState(false);
+
+  /** Bref retour haptique, là où l'appareil le permet. */
+  const buzz = () => {
+    try {
+      navigator.vibrate?.(12);
+    } catch {
+      // Sans effet ailleurs.
+    }
   };
-  const cancelPress = () => {
+
+  const clearPress = () => {
     if (pressTimer.current) clearTimeout(pressTimer.current);
     pressTimer.current = null;
+    setHolding(false);
   };
-  useEffect(() => cancelPress, []);
+
+  const startPress = (e: React.PointerEvent<HTMLSpanElement>) => {
+    // Capturer le pointeur : un léger glissement du doigt ne doit pas
+    // interrompre l'appui.
+    e.currentTarget.setPointerCapture?.(e.pointerId);
+    setHolding(true);
+    pressTimer.current = setTimeout(() => {
+      clearPress();
+      lastTap.current = 0;
+      buzz();
+      onSellerAccess();
+    }, LONG_PRESS_MS);
+  };
+
+  const endPress = () => {
+    // L'appui s'est relâché avant le délai : reste le double appui.
+    const wasPending = pressTimer.current !== null;
+    clearPress();
+    if (!wasPending) return;
+
+    const now = Date.now();
+    if (now - lastTap.current < DOUBLE_TAP_MS) {
+      lastTap.current = 0;
+      buzz();
+      onSellerAccess();
+    } else {
+      lastTap.current = now;
+    }
+  };
+
+  useEffect(() => clearPress, []);
 
   return (
     <div className="flex min-h-dvh flex-col items-center px-6 pb-6 text-center">
@@ -90,18 +136,13 @@ export default function Home({ onStart, onEquivalence, onStory, onSellerAccess }
           style={{ "--i": 4 } as React.CSSProperties}
           className="animate-fade-up stagger mt-12 flex flex-col items-center"
         >
-          {/*
-            Le monogramme de Thibault cache l'accès vendeur : un appui
-            maintenu l'ouvre. Rien ne le signale à l'écran, et un appui
-            bref reste sans effet pour qu'un client curieux ne tombe
-            jamais dessus par hasard.
-          */}
+          {/* Le monogramme cache l'accès vendeur (voir plus haut). */}
           <span
             onPointerDown={startPress}
-            onPointerUp={cancelPress}
-            onPointerLeave={cancelPress}
-            onPointerCancel={cancelPress}
+            onPointerUp={endPress}
+            onPointerCancel={clearPress}
             onContextMenu={(e) => e.preventDefault()}
+            style={{ touchAction: "none", "--press-ms": `${LONG_PRESS_MS}ms` } as React.CSSProperties}
             className="relative flex h-24 w-24 cursor-default items-center justify-center select-none"
           >
             {/* Halo respirant */}
@@ -109,9 +150,18 @@ export default function Home({ onStart, onEquivalence, onStory, onSellerAccess }
               aria-hidden
               className="animate-breathe absolute inset-0 rounded-full bg-gold-light"
             />
+            {/* Anneau de progression, visible seulement pendant l'appui */}
+            {holding && (
+              <span
+                aria-hidden
+                className="animate-press-ring absolute inset-0 rounded-full border-2 border-gold"
+              />
+            )}
             <span
               aria-hidden
-              className="relative flex h-24 w-24 items-center justify-center rounded-full border border-gold/60 bg-paper font-serif text-5xl text-gold-dark shadow-[var(--shadow-card)]"
+              className={`relative flex h-24 w-24 items-center justify-center rounded-full border bg-paper font-serif text-5xl text-gold-dark shadow-[var(--shadow-card)] transition-all duration-200 ${
+                holding ? "scale-95 border-gold" : "border-gold/60"
+              }`}
             >
               {AGENT.name[0]}
             </span>

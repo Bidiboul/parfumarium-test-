@@ -180,10 +180,15 @@ L'application est calée pour un **totem 43 pouces en portrait (1080 × 1920, An
   à 24 px sur les grands écrans verticaux (`src/index.css`). Le texte courant atteint alors
   12 mm et les boutons 4 cm de haut — lisible et cliquable à 1,50 m. Un seul réglage suffit
   à adapter l'interface à une autre dalle.
-- **Espace vendeur masqué** : aucun lien visible. **Appui maintenu (0,9 s) sur le monogramme
-  de Thibault** — le « T » de l'accueil — puis code à 4 chiffres. Un appui bref reste sans
-  effet, pour qu'un client curieux ne tombe jamais dessus. **Le code est redemandé à chaque
-  accès** : rien n'est mémorisé d'une visite à l'autre.
+- **Espace vendeur masqué** : aucun lien visible. Il s'ouvre depuis le **monogramme « T » de
+  Thibault**, sur l'accueil, par l'un ou l'autre de ces deux gestes :
+  - un **appui maintenu** (0,65 s) — un anneau doré se déploie pendant l'appui pour montrer
+    que le geste est pris en compte ;
+  - un **double appui rapide**.
+
+  Un appui bref isolé reste sans effet et n'affiche rien, pour qu'un client curieux ne tombe
+  jamais dessus. **Le code est ensuite redemandé à chaque accès** : rien n'est mémorisé d'une
+  visite à l'autre.
 - **Diaporama de veille** : après 5 min sans contact sur l'accueil, quatre vues défilent
   (la maison, les 50 fragrances, **l'offre duo mise en avant**, le diagnostic offert), sous
   un « Touchez-moi » qui rebondit doucement (`src/components/Slideshow.tsx`). Évite aussi
