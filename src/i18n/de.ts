@@ -62,6 +62,8 @@ export const de: Translation = {
     referenceKicker: "Das Parfum, das Sie kennen",
     accordsTitle: "Hauptakkorde",
     closestMatch: "Am nächsten bei uns",
+    confidence: { forte: "Starke Übereinstimmung", bonne: "Nahe verwandt", piste: "Einen Versuch wert" },
+    confidenceHint: "Nähe aus Akkorden und Noten berechnet. Am besten auf dem Teststreifen prüfen.",
     noMatch: "Keine verlässliche Entsprechung für diese Referenz.",
     indexLoading: "Referenzdatenbank wird geladen…",
     indexReady: (count) => `${count} Parfum-Referenzen verfügbar.`,

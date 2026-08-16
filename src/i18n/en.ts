@@ -62,6 +62,8 @@ export const en: Translation = {
     referenceKicker: "The perfume you know",
     accordsTitle: "Main accords",
     closestMatch: "Closest match in store",
+    confidence: { forte: "Strong match", bonne: "Close relative", piste: "Worth exploring" },
+    confidenceHint: "Closeness computed from accords and notes. Best confirmed on a blotter.",
     noMatch: "No reliable match for this reference.",
     indexLoading: "Loading the reference database…",
     indexReady: (count) => `${count} perfume references available.`,

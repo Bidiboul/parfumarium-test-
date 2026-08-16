@@ -30,6 +30,7 @@ import {
   referenceCount,
   listHouses,
   referencesOfHouse,
+  confidenceOf,
   type Reference,
   type ReferenceMatch,
   type House,
@@ -135,6 +136,34 @@ export default function Equivalence({ onBack }: EquivalenceProps) {
     setHouseQuery(null);
     setHouse(null);
     setSelected(null);
+  };
+
+  /**
+   * Indicateur de proximité : trois pastilles dont une à trois sont
+   * pleines. Le client voit d'un coup d'œil si le rapprochement est
+   * solide ou si c'est une suggestion à sentir avant de juger.
+   */
+  const renderConfidence = (score: number) => {
+    const level = confidenceOf(score);
+    const filled = level === "forte" ? 3 : level === "bonne" ? 2 : 1;
+    return (
+      <span
+        className="inline-flex items-center gap-1.5 rounded-full border border-gold-light bg-cream px-3 py-1"
+        title={t.ui.confidenceHint}
+      >
+        <span aria-hidden className="flex gap-0.5">
+          {[0, 1, 2].map((i) => (
+            <span
+              key={i}
+              className={`block h-1.5 w-1.5 rounded-full ${i < filled ? "bg-gold-dark" : "bg-gold-light"}`}
+            />
+          ))}
+        </span>
+        <span className="text-[0.6875rem] font-medium text-gold-dark">
+          {t.ui.confidence[level]}
+        </span>
+      </span>
+    );
   };
 
   /* -------------------------------------------------------------- */
@@ -255,9 +284,12 @@ export default function Equivalence({ onBack }: EquivalenceProps) {
               as="section"
               className="mt-4 rounded-3xl border border-gold/50 bg-gradient-to-b from-paper to-cream p-6 shadow-[var(--shadow-card)]"
             >
-              <p className="text-[0.6875rem] font-semibold tracking-[0.3em] text-gold-dark uppercase">
-                {t.ui.closestMatch}
-              </p>
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <p className="text-[0.6875rem] font-semibold tracking-[0.3em] text-gold-dark uppercase">
+                  {t.ui.closestMatch}
+                </p>
+                {renderConfidence(match.score)}
+              </div>
               <div className="mt-3 flex items-start justify-between gap-3">
                 <h3 className="font-serif text-3xl leading-tight text-ink">
                   <span className="text-gold-dark">{match.best.id}</span> — {match.best.name}
@@ -280,9 +312,12 @@ export default function Equivalence({ onBack }: EquivalenceProps) {
               <p className="mt-3 text-sm leading-relaxed text-ink">
                 {getDescription(match.best, lang)}
               </p>
+              <p className="mt-3 text-xs leading-relaxed text-ink-soft/80">
+                {t.ui.confidenceHint}
+              </p>
               <button
                 onClick={() => setDetails(match.best)}
-                className="lift mt-5 w-full rounded-full border border-ink/80 px-6 py-3 text-sm font-medium text-ink hover:border-gold hover:text-gold-dark"
+                className="lift mt-4 w-full rounded-full border border-ink/80 px-6 py-3 text-sm font-medium text-ink hover:border-gold hover:text-gold-dark"
               >
                 {t.ui.detailsButton}
               </button>

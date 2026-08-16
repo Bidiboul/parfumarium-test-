@@ -62,6 +62,8 @@ export const it: Translation = {
     referenceKicker: "Il profumo che conoscete",
     accordsTitle: "Accordi principali",
     closestMatch: "Il più vicino da noi",
+    confidence: { forte: "Corrispondenza forte", bonne: "Molto vicino", piste: "Da scoprire" },
+    confidenceHint: "Vicinanza calcolata dagli accordi e dalle note. Da confermare sulla mouillette.",
     noMatch: "Nessuna corrispondenza affidabile per questa referenza.",
     indexLoading: "Caricamento della base di referenze…",
     indexReady: (count) => `${count} referenze di profumi consultabili.`,

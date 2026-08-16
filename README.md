@@ -167,10 +167,42 @@ anglais et [`src/data/canonical.ts`](src/data/canonical.ts) pour le français. L
 est mesurée par similarité cosinus, retenue après comparaison avec d'autres mesures (Dice,
 couverture) sur les correspondances officielles du catalogue.
 
-Mesurée sur 16 correspondances officielles connues, la correspondance calculée retrouve
-la bonne référence **en première position dans 50 % des cas et dans le top 3 dans 69 %**.
-C'est la raison pour laquelle les correspondances officielles restent prioritaires et
-signalées comme telles : le calcul ne sert que pour les références qui n'en ont pas.
+Quatre mécanismes, ajoutés après avoir constaté des rapprochements manifestement faux :
+
+1. **Profils boutique enrichis.** Nos fiches décrivent un parfum en quelques mots français ;
+   l'index donne la composition réelle. Chaque parfum boutique est donc profilé à partir de
+   l'original qu'il déclare dans son champ `match`, la description française ne comblant que
+   les manques, à poids réduit. Les deux côtés de la comparaison parlent alors la même langue.
+2. **Pondération informative (IDF).** « boisé » ou « floral » figurent dans la moitié du
+   catalogue mondial et ne distinguent rien ; « pistache », « oud » ou « cerise » sont
+   décisifs. Sans cette pondération, deux parfums se ressemblent dès qu'ils partagent des
+   banalités.
+3. **Notoriété des maisons** ([`src/data/houses.ts`](src/data/houses.ts)). Une même
+   dénomination existe chez plusieurs marques : « Eros » chez Versace mais aussi chez trois
+   marques confidentielles, « Chance » chez Chanel comme chez Geoffrey Beene. La recherche
+   remontait l'inconnue. La liste ne retire aucune référence et n'invente aucune donnée
+   olfactive : elle ne fait qu'ordonner les résultats.
+4. **Garde-fou sur le genre.** Quand le nom l'annonce (« Le Mâle », « for Women »), le genre
+   opposé est écarté. Sinon, l'orientation moyenne des jetons — apprise sur les 3 591
+   références dont le nom déclare le genre — module le score en proportion de sa netteté,
+   jamais en tout ou rien ; les parfums unisexes ne sont jamais pénalisés.
+
+**Mesures.** Vérité terrain : chacun de nos 46 parfums déclare l'original dont il est
+l'équivalence, donc chercher cet original doit ramener ce parfum-là. Sur les 26 originaux
+présents dans l'index, la bonne référence sort **en première position dans 100 % des cas**
+(46 % avant ces correctifs). Ce test étant en partie circulaire, deux autres mesures le
+complètent : sur 2 130 références hors catalogue, le parfum proposé partage l'accord dominant
+de la demande dans **61 %** des cas (contre 57 %) ; et sur les 3 591 références dont le nom
+annonce le genre — mention masquée avant l'appel — le genre proposé est contredit dans
+**14 %** des cas, contre 24 % sans garde-fou.
+
+Ces chiffres ont une limite de principe : 46 parfums ne peuvent pas couvrir 36 474
+références. Certaines demandes n'ont tout simplement pas d'équivalent en boutique. L'écran
+l'annonce plutôt que de présenter le moins mauvais résultat comme une correspondance : un
+indicateur à trois niveaux (*correspondance forte* / *belle proximité* / *piste à explorer*)
+accompagne chaque rapprochement calculé. Les correspondances officielles du catalogue, elles,
+restent prioritaires et signalées comme telles ; le calcul ne sert que pour les références
+qui n'en ont pas.
 
 ## Totem tactile
 

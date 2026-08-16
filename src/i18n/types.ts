@@ -81,6 +81,9 @@ export interface Translation {
     referenceKicker: string;
     accordsTitle: string;
     closestMatch: string;
+    /** Degré de proximité annoncé au client : forte / bonne / piste. */
+    confidence: { forte: string; bonne: string; piste: string };
+    confidenceHint: string;
     noMatch: string;
     indexLoading: string;
     indexReady: (count: string) => string;
